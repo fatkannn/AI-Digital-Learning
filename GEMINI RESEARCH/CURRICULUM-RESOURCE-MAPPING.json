@@ -1,0 +1,293 @@
+{
+  "project": "AI Digital Learning Dashboard",
+  "version": "1.1",
+  "days": [
+    {
+      "day": 1,
+      "phase": "Phase 1",
+      "topic": "Digital Fundamentals",
+      "existing_objectives": [
+        "Understand basic computer hardware and internet structure"
+      ],
+      "resources": {
+        "primary": ["DIG-FUND-001"],
+        "supporting": ["DIG-FUND-SUP1"],
+        "practice": []
+      },
+      "content_upgrade": {
+        "add": ["Cloud Computing basics", "Introduction to APIs as a concept"],
+        "expand": ["How data travels (HTTP basics)"],
+        "clarify": ["Difference between local storage and cloud servers"],
+        "keep": ["Basic hardware definitions"],
+        "replace": [],
+        "verify": ["DIG-FUND-SUP1 content coverage"]
+      },
+      "lesson_mapping": {
+        "concept_introduction": ["DIG-FUND-001 (Module 1 - Hardware & Internet Basics, 10 mins)"],
+        "core_material": ["DIG-FUND-001 (Module 1 - Lecture Video, 25 mins)"],
+        "example": ["DIG-FUND-001 (HTTP Request Walkthrough, 10 mins)"],
+        "practice": ["Interactive Web Inspection Lab (10 mins)"],
+        "reflection": ["Daily Concept Reflection (5 mins)"],
+        "further_reading": ["DIG-FUND-SUP1"]
+      },
+      "post_test": {
+        "concepts": ["IP Addresses", "HTTP Basics", "Cloud vs Local Storage"],
+        "question_types": ["Multiple Choice", "Analogy Matching"],
+        "difficulty": "Beginner",
+        "misconceptions": ["The internet and the web are the exact same entity"]
+      },
+      "knowledge_mapping": {
+        "domain": "Digital Literacy",
+        "category": "Computer Fundamentals",
+        "subtopics": ["Hardware", "Internet Infrastructure", "Cybersecurity", "Networking"]
+      },
+      "priority": "High"
+    },
+    {
+      "day": 5,
+      "phase": "Phase 2",
+      "topic": "Programming Fundamentals",
+      "existing_objectives": [
+        "Write basic Python scripts and handle variables"
+      ],
+      "resources": {
+        "primary": ["PROG-001"],
+        "supporting": ["PROG-SUP1", "PROG-SUP2"],
+        "practice": []
+      },
+      "content_upgrade": {
+        "add": ["JSON parsing in Python", "Making HTTP Requests with Python"],
+        "expand": ["Dictionaries and Lists data manipulation"],
+        "clarify": ["Virtual Environments (venv)"],
+        "keep": ["Basic loops and conditionals syntax"],
+        "replace": [],
+        "verify": ["PROG-SUP1 API endpoint access rules"]
+      },
+      "lesson_mapping": {
+        "concept_introduction": ["PROG-001 (Data Structures Intro, 10 mins)"],
+        "core_material": ["PROG-001 (Python Dictionaries & Lists, 25 mins)"],
+        "example": ["PROG-001 (JSON Parsing Code Sample, 10 mins)"],
+        "practice": ["Python Dictionary Exercise (10 mins)"],
+        "reflection": ["Code Syntax Self-Check (5 mins)"],
+        "further_reading": ["PROG-SUP2"]
+      },
+      "post_test": {
+        "concepts": ["Dictionary access", "List iteration", "JSON structure mapping"],
+        "question_types": ["Code Snippet Analysis", "Fill-in-the-blank"],
+        "difficulty": "Beginner",
+        "misconceptions": ["Python dictionaries preserve numerical indexes like lists"]
+      },
+      "knowledge_mapping": {
+        "domain": "Software Development",
+        "category": "Programming Fundamentals",
+        "subtopics": ["Variables", "Loops", "Functions", "Data Structures"]
+      },
+      "priority": "High"
+    },
+    {
+      "day": 10,
+      "phase": "Phase 3",
+      "topic": "AI Fundamentals",
+      "existing_objectives": [
+        "Understand what Artificial Intelligence is and its core branches"
+      ],
+      "resources": {
+        "primary": ["AI-FUND-001"],
+        "supporting": ["AI-FUND-SUP1", "AI-FUND-SUP2"],
+        "practice": []
+      },
+      "content_upgrade": {
+        "add": ["Difference between AI, Machine Learning, and Generative AI", "AI project lifecycle overview"],
+        "expand": ["Technical and operational limitations of current AI"],
+        "clarify": ["What AI can and cannot do in business applications"],
+        "keep": ["High-level definition of AI"],
+        "replace": [],
+        "verify": ["AI-FUND-SUP1 enterprise case study references"]
+      },
+      "lesson_mapping": {
+        "concept_introduction": ["AI-FUND-001 (Module 1 - What is AI?, 10 mins)"],
+        "core_material": ["AI-FUND-001 (Machine Learning vs Rules-Based Systems, 20 mins)"],
+        "example": ["AI-FUND-001 (Real-world AI Case Studies, 15 mins)"],
+        "practice": ["AI Capability Classification Matrix (10 mins)"],
+        "reflection": ["Ethical & Capability Reflection (5 mins)"],
+        "further_reading": ["AI-FUND-SUP2"]
+      },
+      "post_test": {
+        "concepts": ["AI vs Machine Learning", "Supervised Learning basics", "AI limitations"],
+        "question_types": ["Multiple Choice", "Scenario Analysis"],
+        "difficulty": "Beginner",
+        "misconceptions": ["AI models possess human-level general consciousness"]
+      },
+      "knowledge_mapping": {
+        "domain": "AI Knowledge",
+        "category": "AI Fundamentals",
+        "subtopics": ["Machine Learning", "Data Science", "AI Strategy", "AI Ethics"]
+      },
+      "priority": "High"
+    },
+    {
+      "day": 15,
+      "phase": "Phase 5",
+      "topic": "LLM Fundamentals",
+      "existing_objectives": [
+        "Understand Large Language Model concepts and generation mechanics"
+      ],
+      "resources": {
+        "primary": ["LLM-FUND-001"],
+        "supporting": ["LLM-FUND-SUP1", "GENAI-001"],
+        "practice": []
+      },
+      "content_upgrade": {
+        "add": ["Tokens vs Words concept", "Context Window boundary limits"],
+        "expand": ["Transformer architecture overview"],
+        "clarify": ["Difference between Pre-training, Fine-tuning, and Inference"],
+        "keep": [],
+        "replace": ["Replace generic text model descriptions with exact Hugging Face Transformer concepts"],
+        "verify": []
+      },
+      "lesson_mapping": {
+        "concept_introduction": ["LLM-FUND-001 (Chapter 1 - Intro to Transformers, 10 mins)"],
+        "core_material": ["LLM-FUND-001 (Tokenization & Context Windows, 25 mins)"],
+        "example": ["Tokenizer Visualizer Demo (10 mins)"],
+        "practice": ["Token & Context Limit Calculation Exercise (10 mins)"],
+        "reflection": ["Model Limits Reflection (5 mins)"],
+        "further_reading": ["GENAI-001"]
+      },
+      "post_test": {
+        "concepts": ["Tokenization mechanics", "Context Window constraints", "Inference latency drivers"],
+        "question_types": ["Scenario Calculation", "Multiple Choice"],
+        "difficulty": "Intermediate",
+        "misconceptions": ["1 Token always equals exactly 1 Word"]
+      },
+      "knowledge_mapping": {
+        "domain": "AI Knowledge",
+        "category": "LLM Fundamentals",
+        "subtopics": ["Transformers", "Tokenization", "Context Window", "Inference"]
+      },
+      "priority": "High"
+    },
+    {
+      "day": 20,
+      "phase": "Phase 6",
+      "topic": "Prompt Engineering",
+      "existing_objectives": [
+        "Construct clear and effective text prompts for LLMs"
+      ],
+      "resources": {
+        "primary": ["PROMPT-001"],
+        "supporting": ["PROMPT-SUP1"],
+        "practice": []
+      },
+      "content_upgrade": {
+        "add": ["XML Tag structural formatting", "System Prompt vs User Prompt role separation"],
+        "expand": ["Chain-of-Thought (CoT) reasoning prompts"],
+        "clarify": ["Few-Shot vs Zero-Shot prompting mechanics"],
+        "keep": ["Clarity and tone instruction rules"],
+        "replace": [],
+        "verify": ["PROMPT-SUP1 URL structure"]
+      },
+      "lesson_mapping": {
+        "concept_introduction": ["PROMPT-001 (Structural Prompting Overview, 10 mins)"],
+        "core_material": ["PROMPT-001 (XML Tags & Chain-of-Thought Techniques, 25 mins)"],
+        "example": ["PROMPT-001 (Claude Prompt Examples, 10 mins)"],
+        "practice": ["XML Prompt Refactoring Exercise (10 mins)"],
+        "reflection": ["Prompt Optimization Review (5 mins)"],
+        "further_reading": ["PROMPT-SUP1"]
+      },
+      "post_test": {
+        "concepts": ["XML Tag structuring", "System Prompt separation", "Few-Shot prompting"],
+        "question_types": ["Prompt Debugging", "Multiple Choice"],
+        "difficulty": "Intermediate",
+        "misconceptions": ["Models cannot follow complex structural boundaries like XML tags"]
+      },
+      "knowledge_mapping": {
+        "domain": "AI Engineering",
+        "category": "Prompt Engineering",
+        "subtopics": ["Few-Shot Prompting", "XML Tags", "Chain of Thought", "System Prompts"]
+      },
+      "priority": "High"
+    },
+    {
+      "day": 25,
+      "phase": "Phase 8",
+      "topic": "RAG",
+      "existing_objectives": [
+        "Understand how AI connects to external knowledge bases"
+      ],
+      "resources": {
+        "primary": ["RAG-001"],
+        "supporting": ["EMBED-001"],
+        "practice": []
+      },
+      "content_upgrade": {
+        "add": ["Vector Databases role", "Semantic Search vs Keyword Search distinctions"],
+        "expand": ["Text Embeddings concept"],
+        "clarify": ["RAG architecture is context retrieval + prompt injection, not model retraining"],
+        "keep": [],
+        "replace": [],
+        "verify": []
+      },
+      "lesson_mapping": {
+        "concept_introduction": ["RAG-001 (What is RAG?, 10 mins)"],
+        "core_material": ["RAG-001 (Vector Search & Pipeline Architecture, 25 mins)"],
+        "example": ["RAG Architecture Sequence Diagram Walkthrough (10 mins)"],
+        "practice": ["RAG Flow Ordering Exercise (10 mins)"],
+        "reflection": ["Hallucination Mitigation Analysis (5 mins)"],
+        "further_reading": ["EMBED-001"]
+      },
+      "post_test": {
+        "concepts": ["Vector Embeddings", "Semantic Search", "RAG Pipeline sequence"],
+        "question_types": ["Ordering Sequence", "Multiple Choice"],
+        "difficulty": "Intermediate",
+        "misconceptions": ["RAG modifies the underlying weights of the LLM"]
+      },
+      "knowledge_mapping": {
+        "domain": "AI Systems",
+        "category": "Retrieval-Augmented Generation",
+        "subtopics": ["Embeddings", "Vector Database", "Semantic Search", "Augmented Context"]
+      },
+      "priority": "High"
+    },
+    {
+      "day": 30,
+      "phase": "Phase 12",
+      "topic": "MCP",
+      "existing_objectives": [
+        "Learn standard protocols for AI tool interaction"
+      ],
+      "resources": {
+        "primary": ["MCP-001"],
+        "supporting": ["AGENT-001", "AGENT-SUP1", "APPDEV-001"],
+        "practice": []
+      },
+      "content_upgrade": {
+        "add": ["Model Context Protocol Client-Server architecture", "JSON-RPC communication standards"],
+        "expand": ["Tool calling & resource exposure"],
+        "clarify": ["Difference between custom API wrappers and open standard protocols"],
+        "keep": [],
+        "replace": [],
+        "verify": ["AGENT-SUP1 URL mapping"]
+      },
+      "lesson_mapping": {
+        "concept_introduction": ["MCP-001 (Architecture Overview, 10 mins)"],
+        "core_material": ["MCP-001 (Client-Server Specs & Tool Calling, 25 mins)"],
+        "example": ["MCP Server JSON-RPC Protocol Sample (10 mins)"],
+        "practice": ["MCP Schema Mapping Exercise (10 mins)"],
+        "reflection": ["Agent Standardization Review (5 mins)"],
+        "further_reading": ["APPDEV-001"]
+      },
+      "post_test": {
+        "concepts": ["MCP Client-Server roles", "Tool definition schema", "JSON-RPC messaging"],
+        "question_types": ["Multiple Choice", "Architecture Analysis"],
+        "difficulty": "Advanced",
+        "misconceptions": ["MCP is a replacement for LLM models"]
+      },
+      "knowledge_mapping": {
+        "domain": "AI Architecture",
+        "category": "Model Context Protocol",
+        "subtopics": ["Client-Server Architecture", "Tool Calling", "JSON-RPC", "Agent Context"]
+      },
+      "priority": "High"
+    }
+  ]
+}

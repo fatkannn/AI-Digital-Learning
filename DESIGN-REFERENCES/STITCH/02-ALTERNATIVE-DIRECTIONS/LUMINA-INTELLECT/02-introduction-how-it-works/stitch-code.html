@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>02 / 03 - How Your Journey Works</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Anton&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e4e2dd",
+                        "inverse-surface": "#30312d",
+                        "primary-container": "#9fe870",
+                        "on-primary-fixed": "#092100",
+                        "surface-container-high": "#eae8e2",
+                        "secondary-container": "#c5eba3",
+                        "outline-variant": "#c1cab5",
+                        "surface-container-low": "#f5f4ee",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#dbdad4",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#acf67c",
+                        "background": "#fbf9f3",
+                        "primary-fixed-dim": "#91d963",
+                        "on-secondary-fixed-variant": "#304f18",
+                        "tertiary-container": "#d4d5d5",
+                        "on-surface": "#1b1c19",
+                        "on-primary-container": "#2e6900",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#225100",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#fbf9f3",
+                        "tertiary": "#5d5f5f",
+                        "surface-variant": "#e4e2dd",
+                        "on-background": "#1b1c19",
+                        "surface-container": "#efeee8",
+                        "inverse-primary": "#91d963",
+                        "secondary-fixed": "#c8eea5",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-tertiary-container": "#5a5c5c",
+                        "on-primary": "#ffffff",
+                        "outline": "#717a68",
+                        "surface-bright": "#fbf9f3",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "secondary-fixed-dim": "#acd28c",
+                        "on-secondary-container": "#4b6c31",
+                        "tertiary-fixed": "#e2e2e2",
+                        "primary": "#2f6c00",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#47672d",
+                        "on-surface-variant": "#41493a",
+                        "on-secondary-fixed": "#0c2000",
+                        "inverse-on-surface": "#f2f1eb",
+                        "surface-tint": "#2f6c00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        "section-gap": "120px",
+                        "unit": "8px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-bold": ["Inter"],
+                        "headline-lg-mobile": ["Anton"],
+                        "headline-lg": ["Anton"],
+                        "display-lg": ["Anton"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "30px", "fontWeight": "400"}],
+                        "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-bold": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["36px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "display-lg": ["80px", {"lineHeight": "1.0", "letterSpacing": "-0.02em", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .timeline-line {
+            position: absolute;
+            top: 24px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #9fe870 0%, #e4e2dd 100%);
+            z-index: 0;
+        }
+        @media (max-width: 768px) {
+            .timeline-line {
+                top: 0;
+                left: 24px;
+                width: 2px;
+                height: 100%;
+                background: linear-gradient(180deg, #9fe870 0%, #e4e2dd 100%);
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 bg-background z-40">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<button aria-label="Back" class="text-primary hover:text-primary-fixed-dim transition-colors flex items-center justify-center p-2 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<div class="font-label-bold text-label-bold text-on-surface tracking-widest uppercase">
+                02 / 03
+            </div>
+<button aria-label="Close" class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-2 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">close</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop py-section-gap w-full max-w-container-max mx-auto relative pb-[120px]">
+<div class="text-center mb-16 md:mb-24 max-w-3xl mx-auto">
+<p class="font-label-bold text-label-bold text-primary mb-4 uppercase tracking-widest">Intro 02</p>
+<h1 class="font-display-lg text-headline-lg-mobile md:text-display-lg text-on-background mb-6 uppercase">How Your Journey Works</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">A sequential learning flow designed for mastery. We break down complex AI concepts into digestible, actionable steps.</p>
+</div>
+<!-- Timeline / Process Flow -->
+<div class="relative w-full max-w-5xl mx-auto py-8">
+<div class="timeline-line hidden md:block"></div>
+<div class="flex flex-col md:flex-row justify-between relative z-10 gap-8 md:gap-4">
+<!-- Step 1: Learn -->
+<div class="flex flex-row md:flex-col items-start md:items-center relative group">
+<div class="w-12 h-12 rounded-full bg-primary-container border-4 border-background flex items-center justify-center shrink-0 mb-0 md:mb-6 shadow-sm z-10 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+</div>
+<div class="ml-6 md:ml-0 md:text-center mt-2 md:mt-0">
+<h3 class="font-title-md text-title-md text-on-background mb-2">Learn</h3>
+<p class="font-body-md text-body-md text-on-surface-variant hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300">Absorb foundational knowledge.</p>
+</div>
+</div>
+<!-- Step 2: Recall -->
+<div class="flex flex-row md:flex-col items-start md:items-center relative group">
+<div class="w-12 h-12 rounded-full bg-surface-container-high border-4 border-background flex items-center justify-center shrink-0 mb-0 md:mb-6 shadow-sm z-10 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">psychology</span>
+</div>
+<div class="ml-6 md:ml-0 md:text-center mt-2 md:mt-0">
+<h3 class="font-title-md text-title-md text-on-background mb-2">Recall</h3>
+<p class="font-body-md text-body-md text-on-surface-variant hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300">Test your understanding actively.</p>
+</div>
+</div>
+<!-- Step 3: Complete -->
+<div class="flex flex-row md:flex-col items-start md:items-center relative group">
+<div class="w-12 h-12 rounded-full bg-surface-container-high border-4 border-background flex items-center justify-center shrink-0 mb-0 md:mb-6 shadow-sm z-10 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">check_circle</span>
+</div>
+<div class="ml-6 md:ml-0 md:text-center mt-2 md:mt-0">
+<h3 class="font-title-md text-title-md text-on-background mb-2">Complete</h3>
+<p class="font-body-md text-body-md text-on-surface-variant hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300">Finish practical exercises.</p>
+</div>
+</div>
+<!-- Step 4: Assess -->
+<div class="flex flex-row md:flex-col items-start md:items-center relative group">
+<div class="w-12 h-12 rounded-full bg-surface-container-high border-4 border-background flex items-center justify-center shrink-0 mb-0 md:mb-6 shadow-sm z-10 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">analytics</span>
+</div>
+<div class="ml-6 md:ml-0 md:text-center mt-2 md:mt-0">
+<h3 class="font-title-md text-title-md text-on-background mb-2">Assess</h3>
+<p class="font-body-md text-body-md text-on-surface-variant hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300">Review your performance.</p>
+</div>
+</div>
+<!-- Step 5: Continue -->
+<div class="flex flex-row md:flex-col items-start md:items-center relative group">
+<div class="w-12 h-12 rounded-full bg-surface-container-high border-4 border-background flex items-center justify-center shrink-0 mb-0 md:mb-6 shadow-sm z-10 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">fast_forward</span>
+</div>
+<div class="ml-6 md:ml-0 md:text-center mt-2 md:mt-0">
+<h3 class="font-title-md text-title-md text-on-background mb-2">Continue</h3>
+<p class="font-body-md text-body-md text-on-surface-variant hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300">Move to the next module.</p>
+</div>
+</div>
+</div>
+<!-- Mobile vertical line -->
+<div class="timeline-line md:hidden absolute top-0 left-[23px] h-full w-[2px] bg-gradient-to-b from-primary-container to-surface-variant -z-10"></div>
+</div>
+<!-- Decorative background element referencing the "Wise" editorial style -->
+<div class="absolute inset-0 z-[-1] overflow-hidden pointer-events-none opacity-30 flex items-center justify-center">
+<div class="w-[800px] h-[800px] rounded-full bg-gradient-to-br from-primary-container/20 to-transparent blur-3xl mix-blend-multiply"></div>
+</div>
+</main>
+<!-- BottomNavBar (Transactional Context - used as main CTA) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-center items-center px-margin-mobile pb-margin-mobile md:pb-margin-desktop bg-gradient-to-t from-background via-background to-transparent pt-12">
+<button class="flex flex-row items-center justify-center bg-primary text-on-primary rounded-full px-12 py-5 w-full md:w-auto mx-auto hover:bg-on-primary-container transition-all active:scale-95 duration-150 shadow-lg">
+<span class="font-label-bold text-label-bold mr-2 uppercase tracking-widest">Continue</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+</button>
+</nav>
+</body></html>

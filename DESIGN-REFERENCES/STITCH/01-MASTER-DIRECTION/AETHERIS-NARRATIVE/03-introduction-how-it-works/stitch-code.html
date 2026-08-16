@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>How Your Journey Works - AI Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#fefcff",
+                        "on-surface-variant": "#414755",
+                        "on-tertiary-fixed-variant": "#454749",
+                        "secondary": "#5e5e5e",
+                        "surface-dim": "#dbd9df",
+                        "tertiary-container": "#737576",
+                        "surface": "#faf8fe",
+                        "primary-fixed": "#d8e2ff",
+                        "tertiary-fixed-dim": "#c6c6c8",
+                        "tertiary-fixed": "#e2e2e4",
+                        "surface-container-low": "#f4f3f8",
+                        "tertiary": "#5a5c5e",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "inverse-on-surface": "#f1f0f6",
+                        "inverse-primary": "#adc6ff",
+                        "on-background": "#1a1b1f",
+                        "surface-container-highest": "#e3e2e7",
+                        "on-secondary-container": "#646464",
+                        "on-tertiary-fixed": "#1a1c1d",
+                        "primary": "#0058bc",
+                        "on-surface": "#1a1b1f",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "secondary-fixed": "#e2e2e2",
+                        "primary-fixed-dim": "#adc6ff",
+                        "surface-variant": "#e3e2e7",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c1c6d7",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#faf8fe",
+                        "secondary-container": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#001a41",
+                        "primary-container": "#0070eb",
+                        "on-tertiary-container": "#fcfcfe",
+                        "surface-tint": "#005bc1",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "outline": "#717786",
+                        "surface-container": "#efedf3",
+                        "inverse-surface": "#2f3034",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#004493",
+                        "surface-container-high": "#e9e7ed",
+                        "background": "#faf8fe"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "margin-mobile": "20px",
+                        "section-gap": "120px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "container-max": "1200px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex flex-col">
+<!-- Top Navigation Area -->
+<header class="w-full bg-surface dark:bg-background top-0 border-b border-outline-variant dark:border-on-surface-variant">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full max-w-container-max mx-auto">
+<!-- Leading Icon -->
+<button class="text-on-surface-variant hover:text-primary transition-colors scale-95 active:scale-90 transition-transform w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<!-- Brand / Title -->
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-variant hidden md:block">
+                AI Academy
+            </div>
+<!-- Trailing Action -->
+<div class="text-on-surface-variant font-label-md">
+                02 / 03
+            </div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop py-section-gap w-full max-w-container-max mx-auto text-center">
+<h1 class="font-headline-xl text-headline-xl md:font-headline-xl text-on-surface mb-16">
+            How Your Journey Works
+        </h1>
+<!-- Flow Diagram Container -->
+<div class="w-full max-w-4xl relative">
+<!-- Connection Line (Desktop) -->
+<div class="hidden md:block absolute top-1/2 left-0 w-full h-[2px] bg-outline-variant -z-10 transform -translate-y-1/2"></div>
+<div class="flex flex-col md:flex-row justify-between items-center gap-12 md:gap-4 relative z-10">
+<!-- Step 1 -->
+<div class="flex flex-col items-center group">
+<div class="w-20 h-20 bg-surface-container-lowest border border-outline-variant rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:border-primary transition-colors bg-white">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="menu_book">menu_book</span>
+</div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider text-on-surface mb-2">Learn</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[150px]">Absorb new concepts.</p>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center group">
+<div class="w-20 h-20 bg-surface-container-lowest border border-outline-variant rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:border-primary transition-colors bg-white">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="psychology">psychology</span>
+</div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider text-on-surface mb-2">Recall</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[150px]">Test your memory.</p>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center group">
+<div class="w-20 h-20 bg-surface-container-lowest border border-outline-variant rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:border-primary transition-colors bg-white">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="task_alt">task_alt</span>
+</div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider text-on-surface mb-2">Complete</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[150px]">Finish practical tasks.</p>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center group">
+<div class="w-20 h-20 bg-surface-container-lowest border border-outline-variant rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:border-primary transition-colors bg-white">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="analytics">analytics</span>
+</div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider text-on-surface mb-2">Assess</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[150px]">Review performance.</p>
+</div>
+<!-- Step 5 -->
+<div class="flex flex-col items-center group">
+<div class="w-20 h-20 bg-surface-container-lowest border border-outline-variant rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:border-primary transition-colors bg-white">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="fast_forward">fast_forward</span>
+</div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider text-on-surface mb-2">Continue</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[150px]">Advance forward.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Area -->
+<footer class="w-full pb-16 pt-8 flex justify-center">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-12 py-4 rounded-full hover:bg-primary-container transition-colors shadow-sm active:scale-95">
+            Continue
+        </button>
+</footer>
+</body></html>

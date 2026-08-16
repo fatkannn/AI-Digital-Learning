@@ -1,0 +1,89 @@
+[
+  {
+    "day": 1,
+    "topic": "How Computers Work (CPU, RAM, storage, GPU, bottleneck prediction)",
+    "objective": "Describe what a CPU, RAM, storage and GPU each do, and why the difference matters; explain why a program must be loaded into RAM before it can run; predict which component is the bottleneck for a given workload.",
+    "decision": "ENHANCE",
+    "priority": "P2",
+    "current_strength": "Strong. Accurate fetch-decode-execute and CPU/RAM/storage/GPU model, effective worked example (compute-bound render misdiagnosed as a RAM problem), hands-on system-monitor activity, and a challenge that pays off on Day 20. All three objectives are directly tested by the quiz.",
+    "identified_gap": "The hardware model omits the NPU (Neural Processing Unit), a dedicated on-device AI accelerator now mainstream in Windows Copilot+ PCs and Apple Silicon Macs, and directly relevant to the day's own bottleneck-prediction objective — a learner running the day's own Task Manager exercise on modern hardware will now see an NPU meter the lesson gives no framework for.",
+    "research_finding": "Microsoft's own official developer documentation confirms the NPU is a distinct, named hardware category (not a marketing term) purpose-built for AI inference, more power-efficient than CPU/GPU for that workload, rated in TOPS, and now directly visible in Windows Task Manager alongside CPU/GPU/Memory/Disk. The hardware category spans multiple vendors (Qualcomm, Intel, AMD), not one platform.",
+    "proposed_enhancement": "Add 1-2 sentences to the end of the Core material segment's GPU paragraph introducing the NPU as a fifth hardware category increasingly relevant to the day's own 'predict the bottleneck' objective, plus an optional one-line addition to the Hands-on segment inviting learners with an NPU-equipped machine to check that meter too.",
+    "evidence": [
+      {
+        "source": "Copilot+ PCs developer guide",
+        "organization": "Microsoft (Windows AI docs)",
+        "url": "https://learn.microsoft.com/en-us/windows/ai/npu-devices/",
+        "source_type": "Official vendor documentation",
+        "credibility": "A"
+      },
+      {
+        "source": "All about neural processing units (NPUs)",
+        "organization": "Microsoft Support",
+        "url": "https://support.microsoft.com/windows/all-about-neural-processing-units-npus-e77a5637-7705-4915-96c8-0c6a975f9db4",
+        "source_type": "Official vendor support documentation",
+        "credibility": "A"
+      }
+    ],
+    "source_quality": "A",
+    "implementation_location": "Core material segment (GPU paragraph, append); optional one-line addition to the Hands-on segment. No new timed segment.",
+    "estimated_time_impact": "Negligible (~1 minute additional reading; no change to the 60-minute total)",
+    "assessment_impact": "None proposed. Existing GPU-related quiz questions (q3, q4, q5) remain valid unchanged; no new question required for a P2 enrichment.",
+    "resource_impact": "None. No new resource entry proposed; the two evidence sources are citations for the justification, not curriculum resource additions.",
+    "verification_required": false
+  },
+  {
+    "day": 2,
+    "topic": "Operating Systems (process vs. program, permissions, terminal)",
+    "objective": "Explain what an operating system actually manages; distinguish a process from a program, and a file path from a file; use the terminal for basic navigation with confidence about what each command does.",
+    "decision": "KEEP",
+    "priority": null,
+    "current_strength": "Strong. Accurate process/program/permission model, effective 'referee' and 'not a more-powerful mode' analogies, realistic file-not-found example, hands-on terminal task, all three objectives tested including a realistic permission-troubleshooting scenario.",
+    "identified_gap": "No content gap identified. Secondary, non-content observation: the Microsoft Learn training-catalogue resource (https://learn.microsoft.com/en-us/training/) is a broad catalog root rather than a specific OS/file-system module, echoing a weak-resource pattern already flagged elsewhere in this project (e.g. M16.2's Day 23 EDTECH-001 finding). Not independently re-verified with a new source this session and not elevated to a day-level decision.",
+    "research_finding": "None pursued — no genuine content gap was found, and researching a day with nothing wrong would be research for its own sake, which is out of scope.",
+    "proposed_enhancement": "None this session.",
+    "evidence": [],
+    "source_quality": null,
+    "implementation_location": null,
+    "estimated_time_impact": "None",
+    "assessment_impact": "None",
+    "resource_impact": "Observation only (catalog-root resource) logged for a possible future, separately-scoped resource-verification pass. No replacement proposed or evidenced this session.",
+    "verification_required": false
+  },
+  {
+    "day": 3,
+    "topic": "Files, Data & Storage (format vs. extension, encoding, CSV/JSON/Markdown)",
+    "objective": "Explain the difference between a file format and a file extension; choose an appropriate format for text, tabular, structured and media data; describe what encoding is and why it breaks things.",
+    "decision": "KEEP",
+    "priority": null,
+    "current_strength": "Strong. Precise 'file = named byte sequence' framing, correctly and deliberately scoped to CSV/JSON/Markdown with a stated rationale tied to the rest of the curriculum, realistic LMS-import comma-bug example, hands-on CSV/JSON comparison, all objectives directly tested.",
+    "identified_gap": "None identified. UTF-8-as-default, CSV/JSON dominance, and the encoding-mismatch failure mode are stable, non-time-sensitive facts.",
+    "research_finding": "None pursued — no genuine gap found.",
+    "proposed_enhancement": "None.",
+    "evidence": [],
+    "source_quality": null,
+    "implementation_location": null,
+    "estimated_time_impact": "None",
+    "assessment_impact": "None",
+    "resource_impact": "None. Both existing resources (MDN, Python official docs) are specific, official, and on-topic.",
+    "verification_required": false
+  },
+  {
+    "day": 4,
+    "topic": "Internet Fundamentals (IP, DNS, HTTP, HTTPS, status codes)",
+    "objective": "Trace what happens between typing a URL and seeing a page; explain IP, DNS and HTTP in terms of the job each one does; read a URL and identify its parts.",
+    "decision": "KEEP",
+    "priority": null,
+    "current_strength": "Strong. Clear protocol-role separation, realistic 401-misdiagnosis example paralleling Day 1's diagnostic-habit example, reusable status-code triage table, DevTools hands-on activity, all objectives directly tested including an applied-judgment question on 429 backoff behavior.",
+    "identified_gap": "None material. HTTP/2 or HTTP/3 wire-level differences were considered and judged out of scope: they do not change what the stated objectives ask the learner to do (trace the lifecycle, explain each protocol's job, read a URL), so adding them would be interesting trivia rather than added capability.",
+    "research_finding": "None pursued — no genuine gap found after the pedagogical audit.",
+    "proposed_enhancement": "None.",
+    "evidence": [],
+    "source_quality": null,
+    "implementation_location": null,
+    "estimated_time_impact": "None",
+    "assessment_impact": "None",
+    "resource_impact": "None. Both existing resources (Cloudflare Learning Center, MDN) are specific, authoritative, and correctly scoped.",
+    "verification_required": false
+  }
+]

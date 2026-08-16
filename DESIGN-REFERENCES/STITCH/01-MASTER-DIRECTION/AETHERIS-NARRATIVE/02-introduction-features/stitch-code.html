@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Academy - Introduction 3</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#fefcff",
+                        "on-surface-variant": "#414755",
+                        "on-tertiary-fixed-variant": "#454749",
+                        "secondary": "#5e5e5e",
+                        "surface-dim": "#dbd9df",
+                        "tertiary-container": "#737576",
+                        "surface": "#faf8fe",
+                        "primary-fixed": "#d8e2ff",
+                        "tertiary-fixed-dim": "#c6c6c8",
+                        "tertiary-fixed": "#e2e2e4",
+                        "surface-container-low": "#f4f3f8",
+                        "tertiary": "#5a5c5e",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "inverse-on-surface": "#f1f0f6",
+                        "inverse-primary": "#adc6ff",
+                        "on-background": "#1a1b1f",
+                        "surface-container-highest": "#e3e2e7",
+                        "on-secondary-container": "#646464",
+                        "on-tertiary-fixed": "#1a1c1d",
+                        "primary": "#0058bc",
+                        "on-surface": "#1a1b1f",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "secondary-fixed": "#e2e2e2",
+                        "primary-fixed-dim": "#adc6ff",
+                        "surface-variant": "#e3e2e7",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c1c6d7",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#faf8fe",
+                        "secondary-container": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#001a41",
+                        "primary-container": "#0070eb",
+                        "on-tertiary-container": "#fcfcfe",
+                        "surface-tint": "#005bc1",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "outline": "#717786",
+                        "surface-container": "#efedf3",
+                        "inverse-surface": "#2f3034",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#004493",
+                        "surface-container-high": "#e9e7ed",
+                        "background": "#faf8fe"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "margin-mobile": "20px",
+                        "section-gap": "120px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "container-max": "1200px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="bg-surface border-b border-outline-variant w-full docked top-0 z-50">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full max-w-container-max mx-auto">
+<button aria-label="Go back" class="text-on-surface-variant hover:text-primary transition-colors scale-95 active:scale-90">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<div class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-on-surface">
+                AI Academy
+            </div>
+<div class="font-label-md text-label-md text-on-surface-variant">
+                03 / 03
+            </div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop py-section-gap w-full max-w-container-max mx-auto">
+<div class="text-center mb-16 max-w-2xl">
+<p class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-4">Intro 03</p>
+<h1 class="font-headline-xl text-headline-xl text-on-surface mb-6">Everything You Need to Keep Learning</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">A comprehensive suite of tools designed to accelerate your understanding and mastery of AI concepts.</p>
+</div>
+<!-- Features Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter w-full max-w-5xl mb-section-gap">
+<!-- Feature 1 -->
+<div class="bg-surface-container-low rounded-xl p-8 border border-surface-variant hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">explore</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-3">Guided Learning</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Structured pathways that take you from foundational concepts to advanced applications, step-by-step.</p>
+</div>
+<!-- Feature 2 -->
+<div class="bg-surface-container-low rounded-xl p-8 border border-surface-variant hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">timer</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-3">Micro-Learning</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Bite-sized lessons designed to fit into your busy schedule, ensuring consistent progress over time.</p>
+</div>
+<!-- Feature 3 -->
+<div class="bg-surface-container-low rounded-xl p-8 border border-surface-variant hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-3">Recall Checks</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Strategic quizzes and knowledge checks embedded to reinforce memory retention and understanding.</p>
+</div>
+<!-- Feature 4 -->
+<div class="bg-surface-container-low rounded-xl p-8 border border-surface-variant hover:border-outline-variant transition-colors group lg:col-span-2">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">neurology</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-3">AI Exploration</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Dive deep into specific AI domains, models, and architectures with interactive simulations and real-world examples.</p>
+</div>
+<!-- Feature 5 -->
+<div class="bg-surface-container-low rounded-xl p-8 border border-surface-variant hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">interactive_space</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-3">Interactive Experiences</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Engage directly with AI tools and sandbox environments to apply what you've learned immediately.</p>
+</div>
+</div>
+<!-- Call to Action -->
+<div class="mt-auto pb-12 w-full flex justify-center">
+<button class="bg-primary text-on-primary font-label-md text-label-md py-4 px-12 rounded-full hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm active:scale-95">
+                Begin My Learning Journey
+            </button>
+</div>
+</main>
+</body></html>

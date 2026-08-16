@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>A Learning Space for Digital &amp; AI Skills</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffdad7",
+                        "surface-container-high": "#e7e8e9",
+                        "inverse-primary": "#c8c6c5",
+                        "secondary-fixed-dim": "#c1c7cf",
+                        "surface-container-highest": "#e1e3e4",
+                        "surface-dim": "#d9dadb",
+                        "surface-tint": "#5f5e5e",
+                        "on-primary-container": "#858383",
+                        "primary-container": "#1c1b1b",
+                        "on-secondary-fixed-variant": "#41474e",
+                        "secondary-container": "#dde3eb",
+                        "on-secondary-container": "#5f656c",
+                        "primary-fixed": "#e5e2e1",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#444748",
+                        "tertiary-fixed-dim": "#ffb3ae",
+                        "surface-container-low": "#f3f4f5",
+                        "outline-variant": "#c4c7c7",
+                        "background": "#f8f9fa",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "inverse-surface": "#2e3132",
+                        "secondary-fixed": "#dde3eb",
+                        "outline": "#747878",
+                        "surface-container": "#edeeef",
+                        "on-surface": "#191c1d",
+                        "tertiary": "#000000",
+                        "on-secondary-fixed": "#161c22",
+                        "on-primary-fixed": "#1c1b1b",
+                        "tertiary-container": "#410004",
+                        "on-tertiary-fixed-variant": "#930014",
+                        "on-error": "#ffffff",
+                        "secondary": "#595f66",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-tertiary-container": "#f04244",
+                        "surface-variant": "#e1e3e4",
+                        "on-primary": "#ffffff",
+                        "on-background": "#191c1d",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#410004",
+                        "primary": "#000000",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary-fixed-variant": "#474746"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "section-gap": "80px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Hanken Grotesk"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background: radial-gradient(circle at top right, rgba(234,228,255,0.4) 0%, transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(255,225,235,0.4) 0%, transparent 40%);
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-on-background font-body-lg flex flex-col relative overflow-hidden">
+<!-- Background Animation Layer -->
+
+<!-- Top Navigation Container (Minimalist Intent) -->
+<header class="w-full px-margin-mobile md:px-margin-desktop py-6 flex justify-between items-center z-10 relative">
+<!-- Back Button -->
+<button class="flex items-center justify-center w-12 h-12 rounded-full bg-surface-container-lowest border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:bg-surface-container-low transition-colors group">
+<span class="material-symbols-outlined text-on-surface group-hover:-translate-x-1 transition-transform">arrow_back</span>
+</button>
+<!-- Brand/Logo (Right Aligned on Mobile, Center on Desktop ideally, keeping minimal here) -->
+<div class="font-display-lg text-headline-sm font-bold text-primary">
+            Highlight
+        </div>
+<!-- Empty placeholder to balance flex-between if needed, or just keep back/brand -->
+<div class="w-12 hidden md:block"></div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop py-section-gap z-10 w-full max-w-container-max mx-auto relative">
+<!-- Content Container -->
+<div class="max-w-[700px] w-full flex flex-col items-center text-center space-y-12">
+<!-- Graphic / Visual Element Placeholder -->
+<div class="w-full max-w-[400px] aspect-square rounded-full bg-gradient-to-tr from-surface-container-highest to-surface-container-lowest shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-white p-8 flex items-center justify-center relative overflow-hidden mb-8 group">
+<img class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-multiply group-hover:scale-105 transition-transform duration-700" data-alt="A minimalist 3D rendering of abstract geometric shapes—spheres and floating planes—in soft pastel colors, symbolizing digital learning and artificial intelligence blending seamlessly. High-key lighting, soft shadows, professional editorial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwqpsSQLDFA-uo4StTvBKFc8SsEdaozXnDUIWiln1LnhUnAuwCFOL_pz0dLQLZTHtht5X39rx1-_fEvMLcz6MUUxQPxFj9-UcgmLdREa5Epvf8sRjH9M_1QDMtwXyJ-PH8tnWdgaRzfidMiqzpBTwY3D_W5KcBnPOSOV_fFt54YKyQeoa_0hBQVa1KvQc5xX-olQ0pPuPIeEgF-I0tNSXmeEtSo13aDkn9aoFxUHt1XnKdHUsj9-SE"/>
+</div>
+<!-- Typography Header -->
+<div class="space-y-6">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary tracking-tight">
+                    A Learning Space for Digital &amp; AI Skills
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[500px] mx-auto leading-relaxed">
+                    Digital Learning is the foundation and AI is the enhancement layer.
+                </p>
+</div>
+<!-- Conceptual Flow (Bento/Card Style) -->
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full pt-8 pb-12">
+<div class="bg-surface-container-lowest px-6 py-4 rounded-xl border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">computer</span>
+<span class="font-label-md text-label-md text-on-surface">Digital Learning</span>
+</div>
+<span class="material-symbols-outlined text-outline">arrow_forward</span>
+<div class="bg-primary px-6 py-4 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] flex items-center gap-3 transform md:-translate-y-2">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-md text-label-md text-on-primary font-bold">AI</span>
+</div>
+<span class="material-symbols-outlined text-outline">arrow_forward</span>
+<div class="bg-surface-container-lowest px-6 py-4 rounded-xl border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">lightbulb</span>
+<span class="font-label-md text-label-md text-on-surface">Smarter Work</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Contextual for Intro Flow) -->
+<footer class="w-full px-margin-mobile md:px-margin-desktop py-8 border-t border-outline-variant/20 bg-background/80 backdrop-blur-md z-20 sticky bottom-0">
+<div class="max-w-container-max mx-auto flex justify-between items-center w-full">
+<!-- Step Indicator -->
+<div class="font-label-md text-label-md text-secondary tracking-widest font-medium">
+                01 / 03
+            </div>
+<!-- Primary Action -->
+<button class="bg-primary text-on-primary px-8 py-4 rounded-full font-label-md text-label-md hover:bg-on-surface transition-colors shadow-lg hover:shadow-xl active:scale-95 flex items-center gap-2">
+                Continue
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</footer>
+</body></html>

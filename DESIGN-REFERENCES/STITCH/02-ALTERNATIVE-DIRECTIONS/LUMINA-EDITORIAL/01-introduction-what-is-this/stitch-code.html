@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumina Learning - Introduction</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#edeeef",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-container": "#f7fff2",
+                        "tertiary": "#006b27",
+                        "secondary-fixed-dim": "#ffb874",
+                        "on-error": "#ffffff",
+                        "background": "#f8f9fa",
+                        "on-surface-variant": "#414754",
+                        "outline-variant": "#c1c6d6",
+                        "outline": "#717785",
+                        "surface-container-high": "#e7e8e9",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#633700",
+                        "surface-bright": "#f8f9fa",
+                        "on-background": "#191c1d",
+                        "secondary-fixed": "#ffdcbf",
+                        "secondary-container": "#fe9400",
+                        "secondary": "#8c5000",
+                        "on-primary-container": "#fefcff",
+                        "surface-tint": "#005db7",
+                        "surface-container-low": "#f3f4f5",
+                        "primary-fixed": "#d6e3ff",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#a9c7ff",
+                        "on-surface": "#191c1d",
+                        "on-primary-fixed": "#001b3d",
+                        "primary": "#005bb3",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#0073e0",
+                        "on-primary-fixed-variant": "#00468c",
+                        "tertiary-fixed": "#72fe88",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#00531c",
+                        "tertiary-container": "#008733",
+                        "inverse-primary": "#a9c7ff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface": "#f8f9fa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#002107",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#2d1600",
+                        "surface-variant": "#e1e3e4",
+                        "tertiary-fixed-dim": "#53e16f",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#6a3b00",
+                        "surface-dim": "#d9dadb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "48px",
+                        "unit": "8px",
+                        "card-padding": "24px",
+                        "gutter": "24px",
+                        "container-margin": "32px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["26px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #f8f9fa; /* theme background */
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-lg text-on-surface bg-background relative overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 bg-background z-40 relative">
+<div class="flex justify-between items-center w-full px-container-margin py-4 max-w-7xl mx-auto bg-background">
+<!-- Back Button (Requested top-left, using 'close' icon from trailing_icon_actions mapped to back functionality visually or maintaining close intent for onboarding exit) -->
+<button class="text-on-surface-variant hover:text-primary transition-colors hover:scale-95 transition-transform flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+<!-- Progress Indicator -->
+<div class="font-label-md text-label-md text-primary font-bold">
+                01 / 03
+            </div>
+<!-- Empty div for balance -->
+<div class="w-10"></div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-container-margin py-section-gap w-full max-w-5xl mx-auto pb-32">
+<!-- Editorial Layout Container -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter w-full items-center">
+<!-- Text Content -->
+<div class="flex flex-col space-y-6 md:pr-12">
+<div class="inline-flex items-center space-x-2 bg-primary-fixed/30 text-primary-fixed-dim px-3 py-1 rounded-full w-max mb-2">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary">Introduction</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-background">
+                    A Learning Space for <span class="text-primary">Digital &amp; AI Skills</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                    Digital learning forms the resilient foundation of your educational journey, providing structured knowledge and essential context. 
+                    Artificial Intelligence acts as the enhancement layer, deeply personalizing your path, adapting to your pace, and illuminating insights that lead to smarter learning and work.
+                </p>
+<!-- Flow Visualization Indicator (Textual/Iconic) -->
+<div class="flex items-center space-x-4 pt-6 text-on-surface-variant opacity-80">
+<div class="flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mb-2 text-on-surface">
+<span class="material-symbols-outlined">computer</span>
+</div>
+<span class="font-label-sm text-label-sm">Digital Base</span>
+</div>
+<span class="material-symbols-outlined text-outline">arrow_forward</span>
+<div class="flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-2 text-primary">
+<span class="material-symbols-outlined">neurology</span>
+</div>
+<span class="font-label-sm text-label-sm">AI Layer</span>
+</div>
+<span class="material-symbols-outlined text-outline">arrow_forward</span>
+<div class="flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center mb-2 text-tertiary-container">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<span class="font-label-sm text-label-sm">Smarter Work</span>
+</div>
+</div>
+</div>
+<!-- Visual Concept / Illustration -->
+<div class="relative w-full aspect-square md:aspect-[4/3] rounded-[24px] overflow-hidden bg-surface-container-lowest shadow-[0px_4px_20px_rgba(0,0,0,0.04)] flex items-center justify-center p-8 mt-10 md:mt-0 border border-surface-container">
+<div class="absolute inset-0 bg-gradient-to-br from-surface-container-lowest to-surface-container-low opacity-50"></div>
+<!-- Abstract Representation of Learning & AI -->
+<div class="w-full h-full bg-cover bg-center rounded-xl relative z-10 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]" data-alt="A clean, minimalist 3D illustration representing the integration of traditional digital learning blocks with fluid, glowing nodes symbolizing Artificial Intelligence. The composition should be airy with abundant white space, utilizing a soft color palette of crisp whites, subtle grays, and glowing accents of deep blue and vibrant orange. The mood is calm, premium, and intellectually stimulating, set against a pristine light-mode background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAtahJZAPOmpWMxM1QkzWiG_befKAVPo8JBwjhRet2sEI6R7hYjq83eRyDhtN-6kP0cXOsAvUH6yAk6ewa2Uktf67fl1jcgwEVjjSUDnozuucYXr7Ad03d1ZLeF1Wz4sjJm7iAT6yRhIcaRtlMB37V5q3tYrhqg2SC0w7p-1HlYouLpEhaWAkfmys6KqC2XLP8cHhnQktpRhHwHS9pJLkKtdBHUOBHo21ajiQhhQfo5DA_8GR8ECrQG')"></div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-background/80 backdrop-blur-md">
+<div class="w-full flex justify-center pb-10 pt-4">
+<button class="bg-primary text-on-primary rounded-full px-12 py-4 flex items-center justify-center shadow-[0px_4px_12px_rgba(0,93,183,0.25)] hover:brightness-110 hover:shadow-lg transition-all scale-100 active:scale-95 duration-200 group">
+<span class="font-label-md text-label-md mr-2">Continue</span>
+<span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</nav>
+</body></html>
