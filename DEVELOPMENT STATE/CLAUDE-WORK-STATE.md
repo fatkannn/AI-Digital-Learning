@@ -3738,3 +3738,40 @@ this task.
   not invent a resolution for them.
 
 ---
+
+# 56. AETHERIS UI IMPLEMENTATION + QA CHECKPOINT (2026-08-17)
+
+## Current baseline
+
+The owner-authorized Aetheris Narrative Layer 3 implementation is complete in
+`APPLICATION/ai-digital-learning-dashboard.jsx`. The approved Entry Experience animation and all
+Layer 1/2 content, progression, persistence keys, question pools, grading, and state contracts
+were preserved.
+
+## Verified evidence
+
+- Introduction 01 → 02 → 03: passed; the BackButton is circular and Intro 03 centers its final
+  capability item.
+- Module Overview: passed; the module progress ribbon and next-up context are present.
+- Learning Path drawer: passed; open/close behavior and locked/current/completed states are intact.
+- Micro-learning and recall: passed; completion advances the active micro and preserves feedback.
+- Module Completion and last-module completion: passed; completion is a restrained visual milestone
+  with score/progress context and the correct next action.
+- Responsive browser review: passed at 1440×900, 1280×800, and 1024×768 with no horizontal
+  overflow.
+- `node QA/verify.mjs APPLICATION/ai-digital-learning-dashboard.jsx`: **5368/5368 passed**.
+- TypeScript check: **0 diagnostics**.
+- GitHub checkpoint: commit `8f18771`, pushed to `origin/master`; working tree was clean afterward.
+
+## Still open
+
+- `verify.mjs` does not cover `window.storage` round-trip persistence. A focused reload/persistence
+  smoke test is the next functional verification item.
+- Only 6 of 25 current V2 modules have a `resources:` array. Resource coverage for the remaining
+  19 modules is the next content/product pass after persistence is closed.
+
+## Boundary for the next pass
+
+Do not add more UI polish or alter Layer 1/2 behavior until the persistence smoke test is recorded.
+Any future content or UI work must be separately scoped and followed by a fresh build, static QA,
+and browser verification.

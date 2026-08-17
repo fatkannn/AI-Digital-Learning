@@ -179,8 +179,8 @@ component's `variant="primary"` already matches this exactly — no change neede
 | Variant | Shape | Fill | Text | Border | Use |
 |---|---|---|---|---|---|
 | Primary | pill (`rounded-full`) | `primary` solid | white | none | The one dominant action per screen (existing `Button variant="primary"` — keep) |
-| Secondary | pill (`rounded-full`) | `surface-container` (`#efedf3`) | `on-surface` | none | A visible but non-dominant action alongside a primary one. **New** — `DESIGN.md` specifies this pill-shaped secondary; the current `Button` component has no pill-shaped neutral variant (its `outline` is `rounded-lg` with a border, its `ghost` has no pill either). Add this variant; do not repurpose `outline`/`ghost` for it. |
-| Ghost / Back | pill icon-button, transparent | none | `on-surface-variant`, `on-surface` on hover | none (or 1px `outline-variant` if standing alone off any content) | Back navigation. **Change from current implementation**: today's back controls (`MicroView`, `ModuleView`, `IntroductionView`) are plain text links with a `ChevronLeft` icon, not a button — the Stitch reference (`introduction_what_is_this/screen.png`) shows a circular icon-only back button top-left. Recommend converging on a circular ghost icon-button as the systemized `BackButton`; flagged in §17 as an implementation-time change, not a Layer-1/2 risk. |
+| Secondary | pill (`rounded-full`) | `surface-container` (`#efedf3`) | `on-surface` | none | Implemented as `Button variant="secondary"`; use for a visible but non-dominant action alongside a primary one. Keep it distinct from the bordered `outline` recovery action. |
+| Ghost / Back | pill icon-button, transparent | none | `on-surface-variant`, `on-surface` on hover | none (or 1px `outline-variant` if standing alone off any content) | Implemented as the circular icon-only `BackButton` used by Introduction, Module Overview, and Micro-learning. The control keeps Back secondary to the page's primary action while preserving an accessible label. |
 | Outline | `rounded-lg` | transparent | `on-surface-variant` | 1px `outline-variant` | Lower-emphasis secondary actions inside dense content (e.g. "Try again" in `MicroView`) — keep the existing `outline` variant for this use; it is distinct from the new pill Secondary above, which is for CTA-adjacent actions, not inline recovery actions. |
 | Disabled | same shape as its variant | 40% opacity, no hover | inherits | inherits | Already implemented via `disabled:opacity-40 disabled:cursor-not-allowed` — keep. |
 | Icon button | circle, 40–44px hit area | transparent, hover → `surface-container` | `on-surface-variant` | none | Drawer triggers, close (`X`) controls, hamburger — already implemented this way; formalize as one component instead of ad hoc `<button>` markup per screen. |
@@ -278,10 +278,9 @@ shared spec rather than changing it.
 - **Journey phase path** — one continuous horizontal line across 4 phase nodes, filled proportion
   = phases completed + current phase's own fractional progress. This is the single "WHERE AM I"
   answer at the top level of the product; keep it singular — don't duplicate this idea elsewhere.
-- **Completion** — currently a status label change only ("Module complete") plus disappearance of
-  the CTA; no distinct celebratory moment exists. Flagged as an **open decision** in §14/§18 — a
-  redesign may want to give module completion (and by extension, the next-module unlock) an
-  explicit beat, but that is a new pattern, not an existing one to preserve.
+- **Completion** — implemented as a restrained completion band within Module Overview, with the
+  best score/progress context and an explicit next-module CTA. It is a milestone in the existing
+  flow, not a modal or a separate celebration route; no new persisted state was added.
 - **Locked / Next** — locked = `Lock` icon in place of a number, muted (`outline`) text, no
   hover/press affordance beyond a click-to-reveal reason (`lockReason`, §10). Next = `primary`
   ring around the node (`ring-4 ring-blue-100` today), used consistently in `ModuleCard`,
@@ -307,7 +306,7 @@ without inventing new Layer 2 fields:
 | **In progress** | `moduleStatus === "in-progress"` | `primary` outline/fill mix (already: filled node once post-test-eligible, outline before), status word "In progress" |
 | **Completed** | `moduleCompleted` / `microDone && microCorrect` | `emerald` fill, `CheckCircle2` |
 | **Failed / Retry** | micro: `microDone && !microCorrect`; module: `postTestDone && !postTestPassed` | `orange` fill, `AlertTriangle` — **already implemented** at the micro level in `ModuleLearningPathDrawer` (`bg-orange-500` + `AlertTriangle` for a done-but-incorrect micro); extend the same treatment to a failed-post-test module row, which today only gets generic "in-progress" styling with no distinct "you tried and didn't pass yet" glyph. |
-| **Mastered** | **not derivable from existing state as a separate boolean** | Proposed: a presentation-only threshold read off `postTestBestPct` (e.g. ≥ 90%) layered on top of the existing `completed` treatment — a subtle upgrade (richer fill or a small accent mark), never a different icon family. **This needs an owner decision** (exact threshold, and whether it's wanted at all) — see §18. |
+| **Mastered** | **not part of the current state model** | Explicitly deferred. Do not infer a mastery threshold from `postTestBestPct`; assessment score remains assessment data until a separate pedagogical/product decision defines mastery. |
 
 Locked-state explanation (`lockReason`) must remain click-to-reveal, single-target, and
 non-blocking — this is existing, tested Layer 2 behavior; Layer 3 only needs to keep rendering
@@ -349,7 +348,7 @@ boxes).
 | **Hover** | Color/background transitions only (`transition-colors`), ~150ms implicit Tailwind default. No movement/scale on hover except the Entry icon wiggle (which is Entry-only, locked). | Keep restrained — this is part of "motion clarifies, not decorates." |
 | **Focus** | `focus-visible:ring-2 ring-blue-500 ring-offset-2`, instant (no transition needed/wanted on focus rings — they must appear immediately for a11y). | Non-negotiable baseline, already applied nearly everywhere — audit for gaps during implementation, don't add a transition to it. |
 | **Progress transitions** | `Bar` fill: `transition-all duration-500`. `MicroRibbon` segment fill: instant color swap (no transition currently) — consider adding a brief (200–300ms) fill transition for consistency with `Bar`, but this is a minor implementation-phase polish item, not a structural decision. | Mostly already implemented. |
-| **Completion transitions** | **None exist today.** | **Open decision** — see §9/§14/§18. If added, it must respect `prefers-reduced-motion` exactly like every other motion in the system, and should not block the learner from proceeding (no forced-watch animation). |
+| **Completion transitions** | No celebratory route or forced-watch animation. | Implemented as a restrained completion band and next-module CTA inside Module Overview; it respects the existing content-enter/reduced-motion behavior and does not block progression. |
 
 All motion above `reducedMotion` must have a no-motion fallback that lands directly on the resting
 state — this is already the pattern for every animated element in the codebase
@@ -413,15 +412,10 @@ implemented plus explicit notes where the brief's flow introduces something not 
 - **Post-test** — its own screen/route (`mode.type === "posttest"`), structured as a linear
   question list (reusing `QuestionInput`) ending in a submit action, then an inline result state
   (score, pass/fail, per-question detail) on the same screen rather than a route change.
-- **Module Completion** — **currently not a distinct visual moment** (§9/§12). Today, reaching
-  this state just re-renders Module Overview with a "Module complete" status line and no CTA.
-  The brief's flow diagram treats MODULE COMPLETION as its own stage between Post-test and Next
-  Module Unlock. **This is the single largest open structural decision in this document** — see
-  §18. Two directions to choose between: (a) keep it as a state of Module Overview (cheapest,
-  most consistent with "no unnecessary new screens") with a richer completion-specific visual
-  treatment layered on; or (b) introduce a genuinely new transitional moment (e.g., a brief
-  full-screen celebratory state before returning to Journey with the next module now unlocked).
-  Do not decide this silently during implementation — it changes the screen graph.
+- **Module Completion** — implemented as a completion state of Module Overview. The state adds a
+  restrained visual beat and a next-module CTA without introducing a new route, modal, celebration
+  animation, or persisted field. This preserves the calm learning flow while making completion
+  legible as a milestone.
 
 ---
 
@@ -495,8 +489,9 @@ abstractions):
   `verify.mjs` assertions must continue passing unchanged after this system is eventually
   implemented, because none of them touch Layer 3.
 - **This document is Layer 3 only**: color classes, typography classes, spacing, component
-  extraction/consolidation, and the two flagged structural additions (Module Completion moment,
-  Mastered state) — both of which read *existing* derived data and add no new stored state.
+  extraction/consolidation, and the Module Completion moment. The Mastered state was explicitly
+  deferred because the current learning model has no mastery concept; no new stored state was
+  introduced.
 - **Entry Experience animation code is out of scope** — document it (§12/§14), never modify it in
   this phase or without separate explicit sign-off, per its own in-code "locked" comment.
 - **Orphaned components stay orphaned** (`ModuleListView`, `ProgressView`, `HistoryView`) — they
@@ -507,10 +502,10 @@ abstractions):
   disabled-button double-enforcement on locked content, `aria-*` attributes) must be preserved
   exactly** through any restyling — this document changes appearance, not interaction
   correctness.
-- **No new persisted state.** Both open decisions (§10 Mastered, §14 Module Completion) must be
-  resolvable from data already in `EMPTY_STATE`'s shape (`micros`, `postTests`) — if a future
-  proposal needs new fields, that's a Layer 1/2 change requiring its own separate process, not
-  something this design system authorizes.
+- **No new persisted state.** Module Completion reads existing derived data from `EMPTY_STATE`'s
+  shape (`micros`, `postTests`). Mastered remains deferred; any future mastery proposal that needs
+  new fields or thresholds is a separate Layer 1/2 product decision, not something this design
+  system authorizes.
 
 ---
 
@@ -546,17 +541,15 @@ abstractions):
   only inform isolated patterns (e.g., streak-chip treatment), never page composition.
 - Don't add a new progress idiom (dot-steppers, percentage rings) alongside the ribbon/path/node
   system already established — pick one vocabulary and keep it.
-- Don't implement anything from this document yet — it is a specification, pending its own
-  separate implementation go-ahead.
+- The approved Layer 3 pass is now implemented and verified. Any further visual change requires a
+  new, explicitly scoped implementation request; do not treat this document as authorization for
+  unrelated UI, content, or logic work.
 
-**Unresolved — needs an explicit owner decision before implementation:**
-1. **Module Completion** — stays a state of Module Overview, or becomes its own transitional
-   moment/screen? (§14)
-2. **Mastered state** — wanted at all, and if so, what `postTestBestPct` threshold defines it?
-   (§10)
-3. **BackButton shape** — converge on the Stitch reference's circular icon button (a visible
-   change from every current back control), or keep the existing text+chevron link pattern and
-   drop this from the button system? (§6)
-4. **Secondary button's real-world usage** — `DESIGN.md` specifies a pill-shaped secondary, but
-   no current screen has an obvious "two roughly-equal actions" moment that needs it yet
-   (post-test retake, maybe?) — worth confirming a concrete first use before adding the variant.
+**Resolved owner decisions and implementation status (2026-08-17):**
+1. **Module Completion** — remains a state of Module Overview, with a restrained completion band
+   and next-module CTA; no separate transitional screen was introduced.
+2. **Mastered state** — explicitly deferred; the product retains locked, available, in-progress,
+   completed, and failed/retry states only.
+3. **BackButton shape** — implemented as the circular icon-only ghost button described in §6.
+4. **Secondary button** — implemented as a pill-shaped `Button` variant and used where a secondary
+   action is present.
