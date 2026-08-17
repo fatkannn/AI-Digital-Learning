@@ -1593,7 +1593,7 @@ const TONE = {
   emerald: { bar: "bg-emerald-600", soft: "bg-emerald-50", text: "text-emerald-700", ring: "ring-emerald-200" },
   orange: { bar: "bg-orange-500", soft: "bg-orange-50", text: "text-orange-700", ring: "ring-orange-200" },
   rose: { bar: "bg-[#ba1a1a]", soft: "bg-[#ffdad6]", text: "text-[#ba1a1a]", ring: "ring-rose-200" },
-  slate: { bar: "bg-slate-400", soft: "bg-slate-100", text: "text-slate-600", ring: "ring-slate-200" },
+  slate: { bar: "bg-[#c1c6d7]", soft: "bg-[#efedf3]", text: "text-[#414755]", ring: "ring-slate-200" },
 };
 
 // tone="dark" is for the slate-900 cards: slate-500 reaches only 3.75:1 there, while
@@ -1607,10 +1607,10 @@ function Eyebrow({ children, className = "", tone = "light" }) {
 /** `threshold` (0-100, optional) marks a required-score line, e.g. the post-test pass mark. */
 function Bar({ pct, tone = "blue", height = "h-2", threshold }) {
   return (
-    <div className={"relative w-full rounded-full bg-slate-200 " + height} role="presentation">
+    <div className={"relative w-full rounded-full bg-[#e3e2e7] " + height} role="presentation">
       <div className={"rounded-full motion-safe:transition-all motion-safe:duration-500 " + TONE[tone].bar + " " + height} style={{ width: Math.max(pct, 0) + "%" }} />
       {threshold != null && (
-        <span aria-hidden="true" className="absolute inset-y-0 w-0.5 bg-slate-500/70" style={{ left: threshold + "%" }} />
+        <span aria-hidden="true" className="absolute inset-y-0 w-0.5 bg-[#717786]/70" style={{ left: threshold + "%" }} />
       )}
     </div>
   );
@@ -1631,14 +1631,35 @@ function Button({ children, onClick, variant = "primary", size = "md", disabled,
   const variants = {
     // Aetheris primary CTA: pill-shaped, primary blue, no border.
     primary: "rounded-full bg-[#0058bc] text-white hover:bg-[#004493]",
-    ghost: "rounded-lg text-slate-700 hover:bg-slate-100",
-    outline: "rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50",
-    danger: "rounded-lg border border-rose-200 bg-white text-rose-700 hover:bg-rose-50",
+    // Pill-shaped, per DESIGN-SYSTEM-MASTER.md §6 — a visible-but-not-dominant action
+    // alongside a primary CTA (distinct from `outline`, which is for inline recovery
+    // actions like MicroView's "Try again", not CTA-adjacent choices).
+    secondary: "rounded-full bg-[#efedf3] text-[#1a1b1f] hover:bg-[#e3e2e7]",
+    ghost: "rounded-lg text-[#414755] hover:bg-[#efedf3] hover:text-[#1a1b1f]",
+    outline: "rounded-lg border border-[#c1c6d7] bg-white text-[#414755] hover:bg-[#f4f3f8] hover:text-[#1a1b1f]",
+    danger: "rounded-lg border border-[#ffdad6] bg-white text-[#ba1a1a] hover:bg-[#ffdad6]/40",
   };
   return (
     <button type="button" onClick={onClick} disabled={disabled} className={[base, sizes[size], variants[variant], className].join(" ")}>
       {Icon ? <Icon className="h-4 w-4" /> : null}
       {children}
+    </button>
+  );
+}
+
+/** Systemized back navigation (DESIGN-SYSTEM-MASTER.md §6/§15).
+    The circular ghost treatment keeps Back secondary to the page's primary action while
+    remaining discoverable through the accessible label and native tooltip. `tone="muted"`
+    is for placement on a large hero (Introduction) where the control should recede further
+    than it does inline atop a working screen. */
+function BackButton({ children = "Back", onClick, tone = "default", className = "" }) {
+  const label = typeof children === "string" ? children : "Back";
+  const toneClass = tone === "muted" ? "text-[#717786] hover:border-[#717786] hover:text-[#1a1b1f]" : "text-[#414755] hover:border-[#717786] hover:text-[#1a1b1f]";
+  return (
+    <button type="button" onClick={onClick} aria-label={label} title={label}
+      className={"inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#c1c6d7] bg-transparent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 " + toneClass + " " + className}>
+      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+      <span className="sr-only">{label}</span>
     </button>
   );
 }
@@ -1650,12 +1671,13 @@ function Card({ children, className = "" }) {
 /* The signature element, adapted for V2: one block per microlearning in a module, sized
    by its target duration, coloured by completion. Same visual language as the V1 hour
    ribbon, now representing a module's micro-learnings instead of one day's timed segments. */
-function MicroRibbon({ module, state, onOpenMicro, compact = false }) {
+function MicroRibbon({ module, state, onOpenMicro, activeId = null, compact = false }) {
   return (
     <div className="w-full">
       <div className={"flex w-full gap-1 " + (compact ? "h-2.5" : "h-3")}>
         {module.micros.map((mc) => {
           const done = microDone(state, mc.id);
+          const active = mc.id === activeId && !done;
           return (
             <button
               key={mc.id}
@@ -1663,10 +1685,10 @@ function MicroRibbon({ module, state, onOpenMicro, compact = false }) {
               disabled={!onOpenMicro}
               onClick={() => onOpenMicro && onOpenMicro(mc.id)}
               title={mc.title + " · ~" + mc.m + " min"}
-              aria-label={mc.title + (onOpenMicro ? (done ? ", done" : ", not done") : "")}
+              aria-label={mc.title + (done ? ", done" : active ? ", current" : onOpenMicro ? ", not done" : "")}
               className={
                 "h-full rounded-full transition-colors " +
-                (done ? "bg-blue-700" : "bg-slate-200") +
+                (done ? "bg-[#0058bc]" : active ? "bg-[#efedf3] ring-1 ring-inset ring-[#0058bc]" : "bg-[#e3e2e7]") +
                 (onOpenMicro ? " hover:bg-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" : "")
               }
               style={{ flexGrow: mc.m, flexBasis: 0 }}
@@ -1678,8 +1700,8 @@ function MicroRibbon({ module, state, onOpenMicro, compact = false }) {
         <div className="mt-2 flex w-full gap-1">
           {module.micros.map((mc) => (
             <div key={mc.id} className="min-w-0" style={{ flexGrow: mc.m, flexBasis: 0 }}>
-              <p className="truncate text-xs font-medium text-slate-600">{mc.title}</p>
-              <p className="text-xs tabular-nums text-slate-500">~{mc.m} min</p>
+              <p className="truncate text-xs font-medium text-[#414755]">{mc.title}</p>
+              <p className="text-xs tabular-nums text-[#717786]">~{mc.m} min</p>
             </div>
           ))}
         </div>
@@ -1700,10 +1722,10 @@ function StatTile({ icon: Icon, label, value, sub, tone = "slate" }) {
     <Card className="p-4">
       <div className="flex items-center gap-2">
         <Icon className={"h-4 w-4 " + TONE[tone].text} />
-        <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-[#717786]">{label}</p>
       </div>
-      <p className={"mt-2 font-semibold tabular-nums tracking-tight text-slate-900 " + (String(value).length > 11 ? "text-lg" : "text-2xl")}>{value}</p>
-      {sub ? <p className="mt-0.5 text-xs text-slate-500">{sub}</p> : null}
+      <p className={"mt-2 font-semibold tabular-nums tracking-tight text-[#1a1b1f] " + (String(value).length > 11 ? "text-lg" : "text-2xl")}>{value}</p>
+      {sub ? <p className="mt-0.5 text-xs text-[#717786]">{sub}</p> : null}
     </Card>
   );
 }
@@ -1711,17 +1733,17 @@ function StatTile({ icon: Icon, label, value, sub, tone = "slate" }) {
 function ResourceList({ resources }) {
   if (!resources || !resources.length) return null;
   return (
-    <div className="mt-2 divide-y divide-slate-100">
+    <div className="mt-2 divide-y divide-[#e9e7ed]">
       {resources.map((r, i) => (
         <a key={i} href={r.url} target="_blank" rel="noopener noreferrer"
-          className="flex items-center justify-between gap-3 py-2.5 text-sm hover:bg-slate-50">
+          className="flex items-center justify-between gap-3 py-2.5 text-sm hover:bg-[#f4f3f8]">
           <span className="min-w-0">
-            <span className="font-medium text-slate-900">{r.title}</span>
-            <span className="ml-2 text-slate-500">{r.source}</span>
+            <span className="font-medium text-[#1a1b1f]">{r.title}</span>
+            <span className="ml-2 text-[#717786]">{r.source}</span>
           </span>
           <span className="flex shrink-0 items-center gap-2">
             {r.verified ? <Pill tone="emerald">Verified</Pill> : <Pill tone="orange" icon={AlertTriangle}>Unverified</Pill>}
-            <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
+            <ExternalLink className="h-3.5 w-3.5 text-[#717786]" />
           </span>
         </a>
       ))}
@@ -1740,7 +1762,7 @@ function QuestionInput({ q, given, onChange, idx }) {
       {(q.t === "mc" || q.t === "sc") && (
         <div className="mt-3 space-y-0.5" role="radiogroup" aria-labelledby={"q" + idx + "-label"}>
           {q.opts.map((o, oi) => (
-            <label key={oi} className={"flex cursor-pointer items-start gap-3 rounded-md py-2 pr-2.5 text-sm transition-colors " + (given === oi ? "bg-blue-50" : "hover:bg-slate-50")}>
+            <label key={oi} className={"flex cursor-pointer items-start gap-3 rounded-md py-2 pr-2.5 text-sm transition-colors " + (given === oi ? "bg-blue-50" : "hover:bg-[#f4f3f8]")}>
               <input type="radio" name={"q" + idx} checked={given === oi} onChange={() => onChange(oi)} className="mt-0.5 h-4 w-4 shrink-0 accent-[#0058bc]" />
               <span className={given === oi ? "text-[#0058bc]" : "text-[#414755]"}>{o}</span>
             </label>
@@ -1751,7 +1773,7 @@ function QuestionInput({ q, given, onChange, idx }) {
         <div className="mt-3 flex gap-2" role="group" aria-labelledby={"q" + idx + "-label"}>
           {[true, false].map((v) => (
             <button key={String(v)} type="button" onClick={() => onChange(v)} aria-pressed={given === v}
-              className={"rounded-md px-4 py-1.5 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0058bc] focus-visible:ring-offset-2 " + (given === v ? "bg-blue-50 text-[#0058bc]" : "text-[#414755] hover:bg-slate-50")}>
+              className={"rounded-md px-4 py-1.5 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0058bc] focus-visible:ring-offset-2 " + (given === v ? "bg-blue-50 text-[#0058bc]" : "text-[#414755] hover:bg-[#f4f3f8]")}>
               {v ? "True" : "False"}
             </button>
           ))}
@@ -1792,12 +1814,10 @@ function MicroView({ module, micro, state, onSubmitRecall, onContinue, onBack })
 
   return (
     <div className="mx-auto max-w-2xl">
-      <button onClick={onBack} className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-[#414755] hover:text-[#1a1b1f] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0058bc] focus-visible:ring-offset-2">
-        <ChevronLeft className="h-4 w-4" /> Back to module
-      </button>
+      <BackButton onClick={onBack} className="mb-4">Back to module</BackButton>
 
       {/* Persistent but subtle position-in-module indicator — reuses the signature ribbon. */}
-      <MicroRibbon module={module} state={state} compact />
+      <MicroRibbon module={module} state={state} activeId={micro.id} compact />
       <p className="mt-2 text-xs text-[#414755]">Micro {idx + 1} of {module.micros.length} · ~{micro.m} min{already ? " · done" : ""}</p>
 
       <Eyebrow className="mt-6">Module {module.id} · {module.title}</Eyebrow>
@@ -1892,8 +1912,8 @@ function ModuleView({ module, state, onOpenMicro, onOpenPostTest, onOpenModule, 
   // Exactly one primary action, and only for the current module's own micro-learning
   // progression — no post-test detail and no "next module" branch here (that context
   // now lives in the drawer). Once every micro is done and the post-test is passed,
-  // there is genuinely nothing left to do in *this* module, so no CTA renders at all;
-  // the greeting line already says "Module complete".
+  // there is genuinely nothing left to do in *this* module — the completed-state block
+  // below takes over instead of this CTA (see `completedNextModule`/`journeyComplete`).
   let ctaLabel = null, ctaAction = null;
   if (next) {
     ctaLabel = started ? "Continue Learning" : "Start Learning";
@@ -1902,6 +1922,19 @@ function ModuleView({ module, state, onOpenMicro, onOpenPostTest, onOpenModule, 
     ctaLabel = attempts.length ? "Retake Post-Test" : "Start Post-Test";
     ctaAction = onOpenPostTest;
   }
+
+  // Module completion moment (approved UX decision — see DESIGN-SYSTEM-MASTER.md §9/§14).
+  // Reads only existing derived state (activeModuleId, postTestBestPct, moduleCompletionDate)
+  // — no new Layer 2 logic. activeModuleId(state) is "the first not-yet-completed module in id
+  // order"; since module ids are already a valid topological order of the prerequisite DAG
+  // (every prereq id < its own id — enforced by verify.mjs), the module it returns right after
+  // *this* one completes is guaranteed unlocked: everything up to and including this module is
+  // now done, and that next module's prereqs can only point at modules ≤ this one. Falls back to
+  // this module's own id only when it's the last one and the whole journey is complete.
+  const completed = status === "completed";
+  const globalNextId = completed ? activeModuleId(state) : null;
+  const completedNextModule = completed && globalNextId !== module.id ? moduleById(globalNextId) : null;
+  const journeyComplete = completed && globalNextId === module.id;
 
   const fx = (delayMs) => reducedMotion ? undefined : {
     transition: "opacity 350ms ease-out " + delayMs + "ms, transform 350ms ease-out " + delayMs + "ms",
@@ -1941,22 +1974,29 @@ function ModuleView({ module, state, onOpenMicro, onOpenPostTest, onOpenModule, 
     // the viewport without fighting <main>'s own padding the way min-h-screen would —
     // comfortably clear of overflow even at the shortest target viewport.
     <div className="mx-auto flex min-h-[70vh] max-w-3xl flex-col">
-      <button onClick={onBack} className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-[#414755] hover:text-[#1a1b1f] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
-        <ChevronLeft className="h-4 w-4" /> Back
-      </button>
+      <BackButton onClick={onBack} className="mb-4">Back</BackButton>
 
-      {/* -translate-y-12 (48px) nudges the cluster up from dead-center — Back stays put,
-          above it, in normal flow; this only shifts the centered block underneath it. */}
-      <div className="flex flex-1 -translate-y-12 flex-col justify-center">
+      {/* Keep the chapter-opening cluster slightly above center, but let the progress block
+          below give the screen a real visual anchor instead of leaving the learner with a
+          headline and a floating CTA in a mostly empty canvas. */}
+      <div className="flex flex-1 -translate-y-4 flex-col justify-center">
         {/* WHERE AM I / WHAT AM I LEARNING — greeting, then phase/module position (tertiary),
             then the current focus as the strongest text on the screen, then its module/
             category context (secondary). Title+subtitle read as one block (tight mt-2/mt-3
             rhythm); the gap before the action block below is the one clear seam in the
             scene. */}
         <div style={fx(0)}>
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#414755]">
-            {status === "completed" ? "Module complete" : greeting()}
-          </p>
+          {completed ? (
+            <div className="flex max-w-xl items-center gap-3 rounded-lg border border-emerald-200 bg-emerald-50/60 px-4 py-3 text-emerald-800">
+              <CheckCircle2 className="h-5 w-5 shrink-0" />
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide">Module complete</p>
+                <p className="mt-0.5 text-xs text-[#414755]">You’ve completed this module. Your next step is below.</p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#414755]">{greeting()}</p>
+          )}
           <p className="mt-1.5 text-xs text-[#414755]">
             Phase {phase?.number} · {phase?.label} · Module {module.id} of {MODULES.length}
           </p>
@@ -1966,15 +2006,56 @@ function ModuleView({ module, state, onOpenMicro, onOpenPostTest, onOpenModule, 
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#414755]">
             {next ? "Next in " + module.title : module.purpose}
           </p>
+          {/* A restrained, editorial reward: the earned score and when it was earned — reads
+              existing derived data only, no new state. No badge, no confetti, no modal. */}
+          {completed && (
+            <p className="mt-4 flex items-center gap-1.5 text-xs text-[#414755]">
+              <Award className="h-3.5 w-3.5 text-emerald-700" />
+              Best score {postTestBestPct(state, module.id)}% · completed {prettyDate(moduleCompletionDate(state, module.id))}
+            </p>
+          )}
+        </div>
+
+        <div style={fx(80)} className="mt-8 max-w-2xl border-y border-[#c1c6d7] py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Eyebrow>Module progress</Eyebrow>
+            <p className="text-xs tabular-nums text-[#414755]">{done} of {total} completed</p>
+          </div>
+          <div className="mt-4">
+            <MicroRibbon module={module} state={state} onOpenMicro={onOpenMicro} activeId={next?.id} />
+          </div>
+          {next && (
+            <p className="mt-3 text-xs text-[#414755]">Next up · {next.title} · ~{next.m} min</p>
+          )}
         </div>
 
         {/* WHAT SHOULD I DO NEXT — compact progress as a count, then the one primary action.
-            Nothing else: no path, no post-test detail, no resources in this canvas. */}
+            Completed state swaps this for the module-completion moment: a direct path to
+            whatever module is next in the learner's journey (or, on the very last module, a
+            calm closing line — no CTA, since there is genuinely nothing left to continue to). */}
         <div style={fx(160)} className="mt-10 flex flex-col items-start gap-3">
-          <p className="text-xs tabular-nums text-[#414755]">
-            {done} of {total} completed{next ? " · ~" + next.m + " min next" : ""}
-          </p>
-          {ctaLabel && <Button size="lg" icon={ArrowRight} onClick={ctaAction}>{ctaLabel}</Button>}
+          {completed ? (
+            completedNextModule ? (
+              <>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#414755]">Next module</p>
+                  <p className="mt-1 text-sm text-[#414755]">{completedNextModule.title}</p>
+                </div>
+                <Button size="lg" icon={ArrowRight} onClick={() => onOpenModule(completedNextModule.id)}>
+                  Continue to Module {completedNextModule.id}
+                </Button>
+              </>
+            ) : journeyComplete ? (
+              <>
+                <p className="text-sm leading-relaxed text-[#414755]">You've completed every module in the journey.</p>
+                <Button variant="secondary" onClick={onBack}>Back to Journey</Button>
+              </>
+            ) : null
+          ) : (
+            <>
+              {ctaLabel && <Button size="lg" icon={ArrowRight} onClick={ctaAction}>{ctaLabel}</Button>}
+            </>
+          )}
         </div>
       </div>
 
@@ -1983,7 +2064,7 @@ function ModuleView({ module, state, onOpenMicro, onOpenPostTest, onOpenModule, 
           the learner explicitly wants orientation. */}
       <button ref={pathTriggerRef} onClick={() => setPathOpen((o) => !o)}
         aria-expanded={pathOpen} aria-controls="module-learning-path-drawer"
-        className="fixed right-0 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-1.5 rounded-l-lg border border-r-0 border-[#c1c6d7] bg-white py-3 pl-2 pr-1.5 text-[#414755] shadow-sm transition-colors hover:bg-slate-50 hover:text-[#1a1b1f] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
+        className="fixed right-0 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-1.5 rounded-l-lg border border-r-0 border-[#c1c6d7] bg-white py-3 pl-2 pr-1.5 text-[#414755] shadow-sm transition-colors hover:bg-[#f4f3f8] hover:text-[#1a1b1f] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
         <ChevronLeft className={"h-3.5 w-3.5 transition-transform " + (pathOpen ? "rotate-180" : "")} />
         <span className="text-[11px] font-semibold uppercase tracking-wide [writing-mode:vertical-rl]">Learning Path</span>
       </button>
@@ -2024,7 +2105,7 @@ function ModuleLearningPathDrawer({ module, state, open, onClose, onOpenMicro, o
 
   return (
     <>
-      <div aria-hidden="true" onClick={onClose} style={backdropStyle} className="fixed inset-0 z-30 bg-slate-900/20" />
+      <div aria-hidden="true" onClick={onClose} style={backdropStyle} className="fixed inset-0 z-30 bg-[#1a1b1f]/20" />
       <div ref={drawerRef} id="module-learning-path-drawer" role="dialog" aria-modal="true" aria-label="Learning path"
         style={panelStyle} onClick={(e) => e.stopPropagation()}
         className="fixed right-0 top-0 z-40 h-full w-full max-w-sm overflow-y-auto border-l border-[#c1c6d7] bg-[#f4f3f8] p-6">
@@ -2033,7 +2114,7 @@ function ModuleLearningPathDrawer({ module, state, open, onClose, onOpenMicro, o
             <p className="text-xs font-semibold uppercase tracking-wide text-[#414755]">Learning Path</p>
             <p className="mt-1 text-sm font-medium text-[#414755]">Phase {phase?.number} · {phase?.label}</p>
           </div>
-          <button onClick={onClose} aria-label="Close learning path" className="shrink-0 rounded p-1 text-[#414755] hover:bg-slate-100 hover:text-[#1a1b1f] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
+          <button onClick={onClose} aria-label="Close learning path" className="shrink-0 rounded p-1 text-[#414755] hover:bg-[#e9e7ed] hover:text-[#1a1b1f] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -2051,7 +2132,7 @@ function ModuleLearningPathDrawer({ module, state, open, onClose, onOpenMicro, o
                     (mdone && mcorrect ? "bg-emerald-600 text-white"
                       : mdone ? "bg-orange-500 text-white"
                       : isNext ? "bg-[#0058bc] text-white ring-4 ring-blue-100"
-                      : !unlocked ? "border-2 border-slate-200 text-slate-300"
+                      : !unlocked ? "border-2 border-[#e3e2e7] text-[#c1c6d7]"
                       : "border-2 border-[#c1c6d7] text-[#414755]")}>
                     {mdone ? (mcorrect ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />)
                       : !unlocked ? <Lock className="h-3.5 w-3.5" /> : i + 1}
@@ -2076,7 +2157,7 @@ function ModuleLearningPathDrawer({ module, state, open, onClose, onOpenMicro, o
           <div className="flex gap-4">
             <div className="flex flex-col items-center">
               <span className={"flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold " +
-                (passed ? "bg-emerald-600 text-white" : allDone ? "bg-[#0058bc] text-white ring-4 ring-blue-100" : "border-2 border-slate-200 text-slate-300")}>
+                (passed ? "bg-emerald-600 text-white" : allDone ? "bg-[#0058bc] text-white ring-4 ring-blue-100" : "border-2 border-[#e3e2e7] text-[#c1c6d7]")}>
                 {passed ? <Award className="h-4 w-4" /> : allDone ? <GraduationCap className="h-4 w-4" /> : <Lock className="h-3.5 w-3.5" />}
               </span>
             </div>
@@ -2131,7 +2212,7 @@ function ModuleCard({ module, state, onOpenModule, isActive, isLast }) {
         <span className={"flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold " +
           (completed ? "bg-emerald-600 text-white"
             : isActive ? "bg-[#0058bc] text-white ring-4 ring-blue-100"
-            : locked ? "bg-slate-100 text-slate-400"
+            : locked ? "bg-[#efedf3] text-[#717786]"
             : "border-2 border-[#c1c6d7] text-[#414755]")}>
           {completed ? <CheckCircle2 className="h-4 w-4" /> : locked ? <Lock className="h-3.5 w-3.5" /> : module.id}
         </span>
@@ -2142,19 +2223,19 @@ function ModuleCard({ module, state, onOpenModule, isActive, isLast }) {
           onClick={() => (locked ? setShowLockHint((v) => !v) : onOpenModule(module.id))}
           aria-describedby={locked ? "lock-hint-" + module.id : undefined}
           className={"grid w-full grid-cols-[1fr_auto] items-start gap-x-3 gap-y-1.5 rounded-lg px-3 py-2.5 text-left transition-colors " +
-            (isActive ? "bg-blue-50/70 hover:bg-blue-50" : locked ? "cursor-default" : "hover:bg-slate-50")}>
+            (isActive ? "bg-blue-50/70 hover:bg-blue-50" : locked ? "cursor-default" : "hover:bg-[#f4f3f8]")}>
           <p className={"col-span-2 flex min-h-8 items-center text-sm " +
-            (isActive ? "font-semibold text-[#1a1b1f]" : locked ? "font-medium text-slate-400" : completed ? "font-medium text-[#414755]" : "font-medium text-[#1a1b1f]")}>
+            (isActive ? "font-semibold text-[#1a1b1f]" : locked ? "font-medium text-[#717786]" : completed ? "font-medium text-[#414755]" : "font-medium text-[#1a1b1f]")}>
             {module.title}
           </p>
           <div className="min-w-0"><MicroRibbon module={module} state={state} compact /></div>
           <span className={"shrink-0 self-center text-xs font-medium " +
-            (isActive ? "text-[#0058bc]" : locked ? "text-slate-400" : completed ? "text-emerald-700" : "text-[#414755]")}>
+            (isActive ? "text-[#0058bc]" : locked ? "text-[#717786]" : completed ? "text-emerald-700" : "text-[#414755]")}>
             {statusWord}
           </span>
         </button>
         {locked && showLockHint && (
-          <p id={"lock-hint-" + module.id} role="status" className="mt-1 flex items-center gap-1 px-3 text-xs text-slate-500">
+          <p id={"lock-hint-" + module.id} role="status" className="mt-1 flex items-center gap-1 px-3 text-xs text-[#717786]">
             <Lock className="h-3 w-3 shrink-0" /> {lockReason(state, module.id)}
           </p>
         )}
@@ -2233,7 +2314,7 @@ function JourneyView({ state, derived, onOpenModule, onOpenMicro, onGo }) {
           WHERE, headline + CTA state WHAT NOW. No card: a hairline below is the only
           separation. The signature MicroRibbon ties this to the module's own progress. */}
       <div className="grid grid-cols-[auto_1fr] items-start gap-x-6 border-b border-[#c1c6d7] pb-10 sm:gap-x-10">
-        <p aria-hidden="true" className="hidden select-none pt-1 text-7xl font-bold leading-none tabular-nums text-slate-100 sm:block sm:text-8xl">
+        <p aria-hidden="true" className="hidden select-none pt-1 text-7xl font-bold leading-none tabular-nums text-[#efedf3] sm:block sm:text-8xl">
           {String(active.id).padStart(2, "0")}
         </p>
         <div>
@@ -2284,10 +2365,10 @@ function JourneyView({ state, derived, onOpenModule, onOpenMicro, onGo }) {
                   <span className={"flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold " +
                     (isCurrent ? "bg-[#0058bc] text-white ring-4 ring-blue-100"
                       : isDone ? "bg-emerald-600 text-white"
-                      : "border-2 border-[#c1c6d7] text-slate-300")}>
+                      : "border-2 border-[#c1c6d7] text-[#c1c6d7]")}>
                     {isDone ? <CheckCircle2 className="h-3.5 w-3.5" /> : distance > 1 ? <Lock className="h-3 w-3" /> : p.number}
                   </span>
-                  <span className={"leading-tight " + (isCurrent ? "text-sm font-semibold text-[#1a1b1f]" : isDone ? "text-xs text-[#414755]" : "text-xs text-slate-400")}>
+                  <span className={"leading-tight " + (isCurrent ? "text-sm font-semibold text-[#1a1b1f]" : isDone ? "text-xs text-[#414755]" : "text-xs text-[#717786]")}>
                     {p.label}
                   </span>
                 </button>
@@ -2311,15 +2392,15 @@ function JourneyView({ state, derived, onOpenModule, onOpenMicro, onGo }) {
           const expanded = isExpanded(p.id);
           const modsComplete = p.modules.filter((m) => m.completed).length;
           return (
-            <div key={p.id} className={i > 0 ? "border-t border-slate-100" : ""}>
-              <button onClick={() => togglePhase(p.id)} className="flex w-full items-center justify-between gap-3 rounded-lg py-3 text-left hover:bg-slate-50">
+            <div key={p.id} className={i > 0 ? "border-t border-[#e9e7ed]" : ""}>
+              <button onClick={() => togglePhase(p.id)} className="flex w-full items-center justify-between gap-3 rounded-lg py-3 text-left hover:bg-[#f4f3f8]">
                 <span className="flex min-w-0 items-center gap-3">
                   <span className={"flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold " +
-                    (isDone ? "bg-emerald-600 text-white" : isCurrent ? "bg-[#0058bc] text-white ring-4 ring-blue-100" : "border-2 border-[#c1c6d7] text-slate-300")}>
+                    (isDone ? "bg-emerald-600 text-white" : isCurrent ? "bg-[#0058bc] text-white ring-4 ring-blue-100" : "border-2 border-[#c1c6d7] text-[#c1c6d7]")}>
                     {isDone ? <CheckCircle2 className="h-3.5 w-3.5" /> : distance > 1 ? <Lock className="h-3 w-3" /> : p.number}
                   </span>
                   <span className="min-w-0">
-                    <span className={"block truncate text-sm " + (isCurrent ? "font-semibold text-[#1a1b1f]" : isDone ? "font-medium text-[#414755]" : "font-medium text-slate-400")}>
+                    <span className={"block truncate text-sm " + (isCurrent ? "font-semibold text-[#1a1b1f]" : isDone ? "font-medium text-[#414755]" : "font-medium text-[#717786]")}>
                       Phase {p.number} · {p.label}
                     </span>
                     <span className="block text-xs text-[#414755]">
@@ -2327,7 +2408,7 @@ function JourneyView({ state, derived, onOpenModule, onOpenMicro, onGo }) {
                     </span>
                   </span>
                 </span>
-                <ChevronRight className={"h-4 w-4 shrink-0 text-slate-400 transition-transform " + (expanded ? "rotate-90" : "")} />
+                <ChevronRight className={"h-4 w-4 shrink-0 text-[#717786] transition-transform " + (expanded ? "rotate-90" : "")} />
               </button>
               {expanded && (
                 <div className="pb-4 pl-10">
@@ -2351,14 +2432,14 @@ function JourneyView({ state, derived, onOpenModule, onOpenMicro, onGo }) {
       {/* Recent activity — lowest-priority section, present for continuity only. */}
       {recent.length > 0 && (
         <>
-          <p className="mt-8 text-xs font-semibold text-slate-400">Recent activity</p>
-          <div className="mt-3 divide-y divide-slate-100">
+          <p className="mt-8 text-xs font-semibold text-[#717786]">Recent activity</p>
+          <div className="mt-3 divide-y divide-[#e9e7ed]">
             {recent.map((e, i) => (
               <div key={i} className="flex items-center justify-between gap-3 py-2 text-sm">
                 <span className="flex min-w-0 items-center gap-2 text-[#414755]">
                   {e.kind === "posttest"
-                    ? (e.passed ? <Award className="h-4 w-4 shrink-0 text-emerald-600" /> : <GraduationCap className="h-4 w-4 shrink-0 text-slate-400" />)
-                    : (e.correct ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" /> : <Circle className="h-4 w-4 shrink-0 text-slate-400" />)}
+                    ? (e.passed ? <Award className="h-4 w-4 shrink-0 text-emerald-600" /> : <GraduationCap className="h-4 w-4 shrink-0 text-[#717786]" />)
+                    : (e.correct ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" /> : <Circle className="h-4 w-4 shrink-0 text-[#717786]" />)}
                   <span className="truncate">{e.kind === "posttest" ? "Post-test — " + e.title : e.title}</span>
                 </span>
                 <span className="shrink-0 text-xs tabular-nums text-[#414755]">
@@ -2527,12 +2608,12 @@ function ResourcesView({ state }) {
   return (
     <div className="mx-auto max-w-3xl">
       <Eyebrow>Resources</Eyebrow>
-      <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Verified resources</h1>
-      <p className="mt-2 text-sm text-slate-600">Curated, verified sources reused from prior curriculum research where a module's content draws on them. Newer V2-only modules are not yet paired with an externally verified resource — see M19-CONSOLIDATION-LOG.md.</p>
-      <div className="mt-8 divide-y divide-slate-200">
+      <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[#1a1b1f] sm:text-3xl">Verified resources</h1>
+      <p className="mt-2 text-sm text-[#414755]">Curated, verified sources reused from prior curriculum research where a module's content draws on them. Newer V2-only modules are not yet paired with an externally verified resource — see M19-CONSOLIDATION-LOG.md.</p>
+      <div className="mt-8 divide-y divide-[#c1c6d7]">
         {withResources.map((m) => (
           <div key={m.id} className="py-5 first:pt-0">
-            <p className="text-sm font-semibold text-slate-900">Module {m.id} · {m.title}</p>
+            <p className="text-sm font-semibold text-[#1a1b1f]">Module {m.id} · {m.title}</p>
             <ResourceList resources={m.resources} />
           </div>
         ))}
@@ -2547,12 +2628,12 @@ function ReviewView({ state, derived, onOpenModule }) {
   return (
     <div className="mx-auto max-w-3xl">
       <Eyebrow>Review</Eyebrow>
-      <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Concepts to review</h1>
-      <p className="mt-2 text-sm text-slate-600">Concepts below {CONFIG.reviewThreshold}% accuracy on your most recent attempt, from recall checks and post-test answers.</p>
+      <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[#1a1b1f] sm:text-3xl">Concepts to review</h1>
+      <p className="mt-2 text-sm text-[#414755]">Concepts below {CONFIG.reviewThreshold}% accuracy on your most recent attempt, from recall checks and post-test answers.</p>
       {derived.review.length === 0 ? (
         <div className="mt-10 text-center">
           <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-600" />
-          <p className="mt-2 text-sm text-slate-600">No weak concepts flagged right now.</p>
+          <p className="mt-2 text-sm text-[#414755]">No weak concepts flagged right now.</p>
         </div>
       ) : (
         <div className="mt-6 space-y-2">
@@ -2562,8 +2643,8 @@ function ReviewView({ state, derived, onOpenModule }) {
               <button key={c.concept} onClick={() => owner && onOpenModule(owner.id)}
                 className="flex w-full items-center justify-between gap-3 rounded-lg border border-rose-200 bg-rose-50 p-4 text-left hover:bg-rose-100">
                 <span>
-                  <span className="block text-sm font-medium text-slate-900">{c.concept}</span>
-                  <span className="block text-xs text-slate-500">{owner ? "Module " + owner.id + " · " + owner.title : "Concept"} · {c.correct}/{c.attempted} correct</span>
+                  <span className="block text-sm font-medium text-[#1a1b1f]">{c.concept}</span>
+                  <span className="block text-xs text-[#717786]">{owner ? "Module " + owner.id + " · " + owner.title : "Concept"} · {c.correct}/{c.attempted} correct</span>
                 </span>
                 <span className="shrink-0 text-sm font-semibold tabular-nums text-rose-700">{c.accuracy}%</span>
               </button>
@@ -2770,8 +2851,8 @@ function TriviaPopup({ trivia, side, maxWidth, reducedMotion, onClose }) {
       className={"absolute top-1/2 z-30 max-w-[90vw] " + (side === "right" ? "left-full ml-3" : "right-full mr-3")}>
       <Card className="p-3.5 text-left shadow-sm">
         <div className="flex items-start justify-between gap-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{trivia.label}</p>
-          <button onClick={onClose} aria-label="Close trivia" className="shrink-0 text-slate-400 hover:text-slate-700">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#717786]">{trivia.label}</p>
+          <button onClick={onClose} aria-label="Close trivia" className="shrink-0 text-[#717786] hover:text-[#1a1b1f]">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -2780,7 +2861,7 @@ function TriviaPopup({ trivia, side, maxWidth, reducedMotion, onClose }) {
             handful of icons get a narrower maxWidth (see usePopupPlacement)
             when the content column leaves less room on their side, and will
             naturally show more lines there rather than overlap the CTA. */}
-        <p className="mt-1.5 text-sm leading-snug text-slate-700">{trivia.trivia}</p>
+        <p className="mt-1.5 text-sm leading-snug text-[#414755]">{trivia.trivia}</p>
       </Card>
     </div>
   );
@@ -2945,7 +3026,7 @@ function EntryView({ onStart }) {
   }, [activeTriviaId]);
 
   return (
-    <div className="min-h-screen overflow-hidden bg-slate-50 text-slate-900">
+    <div className="min-h-screen overflow-hidden bg-[#faf8fe] text-[#1a1b1f]">
       <style>{`
         @keyframes entry-float-0 { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
         @keyframes entry-float-1 { 0%,100% { transform: translateY(0) } 50% { transform: translateY(9px) } }
@@ -3001,10 +3082,10 @@ function EntryView({ onStart }) {
             opacity: 0,
             transform: "scale(0.97)",
           } : undefined}>
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+          <h1 className="text-4xl font-bold tracking-tight text-[#1a1b1f] sm:text-5xl">
             Your Digital Learning Journey
           </h1>
-          <p className="mt-5 text-base leading-relaxed text-slate-600 sm:text-lg">
+          <p className="mt-5 text-base leading-relaxed text-[#414755] sm:text-lg">
             Build practical digital learning skills, then discover how AI can make your learning experiences smarter, faster, and more effective.
           </p>
           <div ref={ctaWrapRef} className="mt-10">
@@ -3086,31 +3167,30 @@ function IntroStepWelcome({ reducedMotion }) {
         Build practical digital learning skills through focused learning experiences, then discover how AI can make the way you learn and work smarter.
       </p>
 
-      {/* The visual anchor: a single typographic lockup, not an illustration —
-          "Digital Learning" set in the same neutral ink as the body copy,
-          "AI" set in the accent blue, joined by a small outlined "+" badge
-          that echoes the icon-badge treatment used later in the Introduction.
-          Deliberately small (text-sm) and muted (tracking-wide, slate-400
-          "+") so it sits quietly under the headline rather than competing
-          with it. */}
-      <div style={fx(160)} className="mt-10 flex items-center justify-center gap-4" aria-hidden="true">
-        <span className="text-sm font-semibold uppercase tracking-[0.2em] text-[#414755]">Digital Learning</span>
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#c1c6d7] text-xs text-[#414755]">+</span>
-        <span className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0058bc]">AI</span>
-      </div>
-
-      {/* Digital Learning is the foundation, AI is the layer on top of it — an
-          editorial two-row breakdown (divide-y, no boxes) rather than a pair
-          of feature cards, so the relationship reads as hierarchy, not two
-          equal tiles. */}
-      <div style={fx(240)} className="mx-auto mt-10 max-w-md divide-y divide-[#c1c6d7] border-t border-[#c1c6d7] text-left">
-        <div className="py-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#414755]">Digital Learning — the foundation</p>
-          <p className="mt-1.5 text-sm leading-relaxed text-[#414755]">Practical, hands-on skills, built one focused concept at a time.</p>
+      {/* Three-node relationship diagram: foundation → enhancement → outcome. It gives this
+          orientation step one clear visual story instead of leaving the relationship as a
+          small typographic lockup above two unrelated text rows. */}
+      <div style={fx(180)} className="mx-auto mt-10 flex max-w-2xl flex-col items-stretch gap-3 text-left sm:flex-row sm:items-stretch sm:gap-2">
+        <div className="flex-1 border-t border-[#c1c6d7] pt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#414755]">Digital Learning</p>
+          <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#717786]">The foundation</p>
+          <p className="mt-2 text-sm leading-relaxed text-[#414755]">Practical, hands-on skills, built one focused concept at a time.</p>
         </div>
-        <div className="py-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#0058bc]">+ AI — an enhancement layer</p>
-          <p className="mt-1.5 text-sm leading-relaxed text-[#414755]">Once that foundation is there, discover practical ways AI can make learning and work smarter.</p>
+        <div className="flex shrink-0 items-center justify-center text-[#717786] sm:px-1" aria-hidden="true">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full border border-[#c1c6d7] text-xs">+</span>
+        </div>
+        <div className="flex-1 border-t border-[#c1c6d7] pt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#0058bc]">AI</p>
+          <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#717786]">The enhancement layer</p>
+          <p className="mt-2 text-sm leading-relaxed text-[#414755]">Discover practical ways AI can make learning and work smarter.</p>
+        </div>
+        <div className="flex shrink-0 items-center justify-center text-[#717786] sm:px-1" aria-hidden="true">
+          <ChevronRight className="h-4 w-4" />
+        </div>
+        <div className="flex-1 border-t border-[#c1c6d7] pt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#414755]">Smarter learning &amp; work</p>
+          <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#717786]">The outcome</p>
+          <p className="mt-2 text-sm leading-relaxed text-[#414755]">Build skills that compound through focused learning and practical AI exploration.</p>
         </div>
       </div>
     </div>
@@ -3186,9 +3266,9 @@ function IntroStepCapabilities({ reducedMotion }) {
           5 items in 2 columns naturally lands the 5th item alone in the
           bottom-left, matching the balanced arrangement asked for. Falls
           back to one column below sm, where a 2-up grid would cramp text. */}
-      <div className="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-x-10 text-left sm:grid-cols-2">
+      <div className="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-x-10 text-left sm:grid-cols-6">
         {INTRO_CAPABILITIES.map((cap, i) => (
-          <div key={cap.label} style={fx(140 + i * 70)} className="flex items-start gap-4 border-t border-[#c1c6d7] py-4">
+          <div key={cap.label} style={fx(140 + i * 70)} className={"flex items-start gap-4 border-t border-[#c1c6d7] py-4 sm:col-span-3 " + (i === INTRO_CAPABILITIES.length - 1 ? "sm:col-start-2" : "")}>
             <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#c1c6d7] bg-white text-[#0058bc]">
               <cap.icon className="h-4 w-4" />
             </span>
@@ -3231,16 +3311,13 @@ function IntroductionView({ onComplete }) {
   // viewport never changes either — the CTA/counter simply cannot drift with
   // content height, without resorting to `position: fixed`.
   return (
-    <div className="h-screen overflow-hidden bg-[#faf8fe] text-[#1a1b1f]">
-      <main className="relative mx-auto flex h-screen max-w-3xl flex-col px-6">
+    <div className="min-h-screen overflow-x-hidden bg-[#faf8fe] text-[#1a1b1f]">
+      <main className="relative mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-16">
         {step > 0 && (
-          <button type="button" onClick={goBack}
-            className="absolute left-6 top-8 inline-flex items-center gap-1 text-sm text-[#717786] transition-colors hover:text-[#1a1b1f] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 sm:left-10 sm:top-10">
-            <ChevronLeft className="h-4 w-4" /> Back
-          </button>
+          <BackButton onClick={goBack} tone="muted" className="absolute left-6 top-8 sm:left-10 sm:top-10">Back</BackButton>
         )}
 
-        <div className="flex flex-1 items-center justify-center overflow-y-auto py-16">
+        <div className="w-full">
           <div key={step} className="w-full">
             {step === 0 && <IntroStepWelcome reducedMotion={reducedMotion} />}
             {step === 1 && <IntroStepJourney reducedMotion={reducedMotion} />}
@@ -3248,7 +3325,7 @@ function IntroductionView({ onComplete }) {
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-col items-center gap-3 pb-10 pt-2">
+        <div className="mt-12 flex shrink-0 flex-col items-center gap-3">
           <p className="text-xs font-medium uppercase tracking-wide text-[#717786]">
             <span className="font-semibold text-[#0058bc]">{String(step + 1).padStart(2, "0")}</span> / 03
           </p>
@@ -3455,7 +3532,7 @@ export default function LearningDashboard() {
               : loadIssue.kind === "newer" ? "Saved progress was written by a newer version"
               : "Saved progress could not be read"}
           </p>
-          <p className="mt-1 text-sm text-slate-700">
+          <p className="mt-1 text-sm text-[#414755]">
             {loadIssue.kind === "repaired"
               ? "Some entries did not match the expected shape and were left out: " + loadIssue.dropped.slice(0, 6).join(", ") +
                 (loadIssue.dropped.length > 6 ? ", and " + (loadIssue.dropped.length - 6) + " more." : ".")
@@ -3463,7 +3540,7 @@ export default function LearningDashboard() {
               ? "This record was written by the previous (V1, day-based) curriculum, which has been replaced by the V2 module/micro-learning structure — there is no meaningful way to convert one into the other. Nothing has been overwritten; your old record is safely backed up below."
               : "Nothing has been overwritten. Saving is paused so the existing record stays intact — anything you do in this session will be lost on reload until you choose an option below."}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-[#717786]">
             {loadIssue.backup
               ? "A verbatim copy was stored under the key " + loadIssue.backup + "."
               : "The backup copy could not be written, so the original record is the only copy — do not reset."}
@@ -3482,8 +3559,8 @@ export default function LearningDashboard() {
   const Sidebar = (
     <nav aria-label="Primary" className="flex h-full flex-col">
       <div className="px-4 py-5">
-        <p className="text-sm font-semibold tracking-tight text-slate-900">AI &amp; Digital Learning</p>
-        <p className="mt-0.5 text-xs text-slate-500">25 modules · micro-learnings, self-paced</p>
+        <p className="text-sm font-semibold tracking-tight text-[#1a1b1f]">AI &amp; Digital Learning</p>
+        <p className="mt-0.5 text-xs text-[#717786]">25 modules · micro-learnings, self-paced</p>
       </div>
       <div className="flex-1 space-y-1 px-2">
         {NAV.map((n) => {
@@ -3492,18 +3569,18 @@ export default function LearningDashboard() {
           return (
             <button key={n.id} onClick={() => goto(n.id)}
               className={"flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors " +
-                (activeItem ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900")}>
+                (activeItem ? "bg-[#0058bc] text-white" : "text-[#414755] hover:bg-[#efedf3] hover:text-[#1a1b1f]")}>
               <Icon className="h-4 w-4" />
               {n.label}
               {n.id === "review" && derived.review.length > 0 && (
-                <span className="ml-auto rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">{derived.review.length}</span>
+                <span className="ml-auto rounded-full bg-[#ffdad6] px-2 py-0.5 text-xs font-semibold text-[#ba1a1a]">{derived.review.length}</span>
               )}
             </button>
           );
         })}
       </div>
-      <div className="space-y-2 border-t border-slate-200 p-4">
-        <p className="text-xs text-slate-500">{persistNote}</p>
+      <div className="space-y-2 border-t border-[#c1c6d7] p-4">
+        <p className="text-xs text-[#717786]">{persistNote}</p>
         {streakStats(state).total === 0 && (
           <Button size="sm" variant="outline" className="w-full" onClick={() => { setState(buildDemoState()); setMenuOpen(false); }}>Load demo history</Button>
         )}
@@ -3526,10 +3603,10 @@ export default function LearningDashboard() {
           return (
             <button key={n.id} onClick={() => goto(n.id)} title={n.label} aria-label={n.label} aria-current={activeItem ? "page" : undefined}
               className={"relative flex h-10 w-10 items-center justify-center rounded-lg transition-colors " +
-                (activeItem ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900")}>
+                (activeItem ? "bg-[#0058bc] text-white" : "text-[#414755] hover:bg-[#efedf3] hover:text-[#1a1b1f]")}>
               <Icon className="h-5 w-5" />
               {n.id === "review" && derived.review.length > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-100 text-[10px] font-semibold text-rose-700">
+                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#ffdad6] text-[10px] font-semibold text-[#ba1a1a]">
                   {derived.review.length > 9 ? "9+" : derived.review.length}
                 </span>
               )}
@@ -3541,7 +3618,7 @@ export default function LearningDashboard() {
           one breakpoint where these become unreachable. */}
       {streakStats(state).total === 0 && (
         <button onClick={() => setState(buildDemoState())} title="Load demo history" aria-label="Load demo history"
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600">
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-[#717786] transition-colors hover:bg-[#efedf3] hover:text-[#414755]">
           <Sparkles className="h-4 w-4" />
         </button>
       )}
@@ -3550,7 +3627,7 @@ export default function LearningDashboard() {
         title={confirmReset ? "Confirm — erase all progress" : "Reset progress"}
         aria-label={confirmReset ? "Confirm — erase all progress" : "Reset progress"}
         className={"flex h-10 w-10 items-center justify-center rounded-lg transition-colors " +
-          (confirmReset ? "bg-rose-50 text-rose-700" : "text-slate-400 hover:bg-slate-100 hover:text-slate-600")}>
+          (confirmReset ? "bg-[#ffdad6] text-[#ba1a1a]" : "text-[#717786] hover:bg-[#efedf3] hover:text-[#414755]")}>
         <RotateCcw className="h-4 w-4" />
       </button>
     </nav>
@@ -3577,7 +3654,7 @@ export default function LearningDashboard() {
 
   let main;
   if (!loaded) {
-    main = <div className="py-24 text-center text-sm text-slate-500">Loading your progress...</div>;
+    main = <div className="py-24 text-center text-sm text-[#717786]">Loading your progress...</div>;
   } else if (mode?.type === "module") {
     main = <ModuleView module={moduleById(mode.id)} state={state}
       onOpenMicro={openMicro}
@@ -3614,9 +3691,9 @@ export default function LearningDashboard() {
       </a>
 
       {/* Mobile bar — true mobile only; tablet gets the persistent icon rail below */}
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 md:hidden">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-[#c1c6d7] bg-white px-4 py-3 md:hidden">
         <div className="flex items-center gap-2">
-          <button ref={menuButtonRef} onClick={() => setMenuOpen((v) => !v)} className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"
+          <button ref={menuButtonRef} onClick={() => setMenuOpen((v) => !v)} className="rounded-lg p-2 text-[#414755] hover:bg-[#efedf3]"
             aria-label="Toggle navigation" aria-expanded={menuOpen} aria-controls="mobile-nav">
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -3635,7 +3712,7 @@ export default function LearningDashboard() {
           icon rail (a compromise that was already collapsed-by-default in spirit). */}
       <button ref={desktopMenuButtonRef} onClick={() => setMenuOpen((v) => !v)}
         aria-expanded={menuOpen} aria-controls="mobile-nav"
-        className="fixed left-0 top-1/2 z-10 hidden -translate-y-1/2 flex-col items-center gap-1.5 rounded-r-lg border border-l-0 border-slate-200 bg-white py-3 pl-1.5 pr-2 text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 lg:flex">
+        className="fixed left-0 top-1/2 z-10 hidden -translate-y-1/2 flex-col items-center gap-1.5 rounded-r-lg border border-l-0 border-[#c1c6d7] bg-white py-3 pl-1.5 pr-2 text-[#717786] shadow-sm transition-colors hover:bg-[#f4f3f8] hover:text-[#1a1b1f] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 lg:flex">
         <Menu className="h-3.5 w-3.5" />
         <span className="text-[11px] font-semibold uppercase tracking-wide [writing-mode:vertical-rl]">Menu</span>
       </button>
@@ -3651,7 +3728,7 @@ export default function LearningDashboard() {
           opacity: menuOpen ? 1 : 0,
           pointerEvents: menuOpen ? "auto" : "none",
         }}
-        className="fixed inset-0 z-20 bg-slate-900/30" />
+        className="fixed inset-0 z-20 bg-[#1a1b1f]/30" />
       <div ref={drawerRef} id="mobile-nav" role="dialog" aria-modal="true" aria-label="Navigation" tabIndex={-1}
         style={{
           ...(reducedMotion ? {} : { transition: "transform 200ms ease-out, opacity 200ms ease-out" }),
@@ -3659,19 +3736,19 @@ export default function LearningDashboard() {
           opacity: menuOpen ? 1 : 0,
           pointerEvents: menuOpen ? "auto" : "none",
         }}
-        className="fixed inset-y-0 left-0 z-20 w-64 overflow-y-auto border-r border-slate-200 bg-white pt-16 focus:outline-none md:pt-0">
+        className="fixed inset-y-0 left-0 z-20 w-64 overflow-y-auto border-r border-[#c1c6d7] bg-white pt-16 focus:outline-none md:pt-0">
         {/* The mobile header already has its own X (the hamburger swaps to X while open),
             so this explicit close control — matching the Learning Path drawer's — only
             needs to appear for the desktop/tablet-drawer case. */}
         <button onClick={() => setMenuOpen(false)} aria-label="Close navigation"
-          className="absolute right-3 top-3 hidden rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 md:block">
+          className="absolute right-3 top-3 hidden rounded p-1 text-[#717786] hover:bg-[#efedf3] hover:text-[#1a1b1f] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 md:block">
           <X className="h-4 w-4" />
         </button>
         {Sidebar}
       </div>
 
       <div className="mx-auto flex max-w-7xl">
-        <aside aria-label="Primary" className="sticky top-0 hidden h-screen w-16 shrink-0 border-r border-slate-200 bg-white md:block lg:hidden">{TabletRail}</aside>
+        <aside aria-label="Primary" className="sticky top-0 hidden h-screen w-16 shrink-0 border-r border-[#c1c6d7] bg-white md:block lg:hidden">{TabletRail}</aside>
         <main id="main-content" tabIndex={-1} className="min-w-0 flex-1 px-4 py-6 focus:outline-none sm:px-6 lg:px-8 lg:py-8">
           {loaded && issueBanner}
           {main}
@@ -3679,7 +3756,7 @@ export default function LearningDashboard() {
               settings screen — this app-wide disclaimer stays exactly as-is everywhere
               else, just not appended under the module landing scene. */}
           {mode?.type !== "module" && (
-            <footer className="mt-12 border-t border-slate-200 pt-6 text-xs leading-relaxed text-slate-500">
+            <footer className="mt-12 border-t border-[#c1c6d7] pt-6 text-xs leading-relaxed text-[#717786]">
               <p>Progress, streaks and review flags are calculated from your completions and answers — none of them are hard-coded. A module is complete when every micro-learning is done and your best post-test score reaches {CONFIG.passThreshold}%; failed post-test attempts are kept in history and still feed the review list, but they do not complete a module or unlock the next one. Recall checks after each micro-learning are non-gated retrieval practice, not a mastery gate. Short answers are graded by keyword matching in both English and Bahasa Indonesia, so treat borderline results as a prompt to re-read rather than a verdict.</p>
               <p className="mt-2">{persistNote}. Curriculum content is written for study, not as a certified reference; verify implementation details against the linked official documentation.</p>
             </footer>
@@ -3728,12 +3805,15 @@ function PostTestView({ module, state, onSubmit, onOpenModule, onBack }) {
               : <Pill tone="orange" icon={AlertTriangle}>Not passed · needs {CONFIG.passThreshold}%</Pill>}
           </div>
           <div className="mt-4"><Bar pct={result.pct} tone={result.passed ? "emerald" : "orange"} height="h-2.5" threshold={CONFIG.passThreshold} /></div>
-          <p className="mt-4 text-sm text-[#414755]">
+          <p className={"mt-4 flex items-start gap-2 text-sm leading-relaxed " + (result.passed ? "text-emerald-800" : "text-[#414755]")}>
+            {result.passed ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : null}
+            <span>
             {alreadyEarned && !result.passed
               ? "This retake is below " + CONFIG.passThreshold + "%, but the module stays complete — your best score of " + earnedBest + "% already counted, and a weaker retake can never cost you a module you've earned."
               : result.passed
-              ? "The module is recorded as complete and your progress has been updated."
+              ? "Module complete — your progress has been updated."
               : "The module is not complete yet. Retake when you're ready — this pool has " + module.postTest.pool.length + " questions, so a retake draws a fresh random set, not the same test again."}
+            </span>
           </p>
           {weak.length > 0 && (
             <div className="mt-4 rounded-lg bg-orange-50 p-4">
@@ -3746,10 +3826,14 @@ function PostTestView({ module, state, onSubmit, onOpenModule, onBack }) {
         </div>
 
         {/* Passing makes the next step of the journey the primary action. */}
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-col items-start gap-3 border-t border-[#c1c6d7] pt-6 sm:flex-row sm:items-center">
           {hasNext ? (
             <>
-              <Button size="lg" icon={ArrowRight} onClick={() => onOpenModule(nextId)}>Continue to next module</Button>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#414755]">Next module</p>
+                <p className="mt-1 text-sm text-[#414755]">{moduleById(nextId).title}</p>
+              </div>
+              <Button size="lg" icon={ArrowRight} onClick={() => onOpenModule(nextId)}>Continue to Module {nextId}</Button>
               <Button variant="outline" onClick={onBack}>Back to module</Button>
             </>
           ) : (
@@ -3757,7 +3841,7 @@ function PostTestView({ module, state, onSubmit, onOpenModule, onBack }) {
           )}
         </div>
 
-        <h2 className="mt-10 text-lg font-semibold tracking-tight text-[#1a1b1f]">Answer review</h2>
+        <h2 className="mt-14 text-lg font-semibold tracking-tight text-[#1a1b1f]">Answer review</h2>
         <div className="mt-3 space-y-3">
           {questionIds.map((qi, i) => {
             const q = module.postTest.pool[qi];
@@ -3790,9 +3874,7 @@ function PostTestView({ module, state, onSubmit, onOpenModule, onBack }) {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <button onClick={onBack} className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-[#414755] hover:text-[#1a1b1f] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0058bc] focus-visible:ring-offset-2">
-        <ChevronLeft className="h-4 w-4" /> Leave post-test
-      </button>
+      <BackButton onClick={onBack} className="mb-4">Leave post-test</BackButton>
       <Eyebrow>Module {module.id} · post-test</Eyebrow>
       <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[#1a1b1f]">{module.title}</h1>
       <p className="mt-2 text-sm text-[#414755]">{questionIds.length} questions, drawn at random from a {module.postTest.pool.length}-question pool. Pass mark {CONFIG.passThreshold}% — <span className="font-medium text-[#1a1b1f]">the module is only complete once you reach it</span>, and you can retake as often as you like. Short answers are checked for key ideas — English or Bahasa Indonesia, both are marked the same.</p>
