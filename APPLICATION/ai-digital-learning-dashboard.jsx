@@ -1588,6 +1588,45 @@ function gradePostTest(mod, questionIds, answers) {
 const STORAGE_KEY = "ai-learning-os-v1";
 const BACKUP_KEY_PREFIX = "ai-learning-os-backup-";
 
+/** Picks a working persistence backend for the runtime this app is actually opened in.
+    `window.storage` (the Artifact host's async key-value API) is the primary backend when it's
+    present and looks real (both methods are actually functions, not just a truthy stub).
+    Browser `localStorage` is the fallback — the app previously had no fallback at all, so any
+    runtime without `window.storage` (e.g. opened directly in a browser rather than inside an
+    Artifact) silently persisted nothing and showed "Not saved — this session only" every time,
+    which is functionally indistinguishable from "resets after reload". Both backends are wrapped
+    in the same { get(key) -> Promise<string|null>, set(key, value) -> Promise<void> } shape so
+    the load/save effects below don't need to know which one is active — only the persistence
+    status copy does (see `persistNote`). Returns null when neither backend actually works (e.g.
+    localStorage exists but throws on write — Safari private mode, disabled storage, full quota),
+    so the app can honestly fall back to session-only rather than claim a backend that doesn't work. */
+function detectStorageBackend() {
+  if (typeof window === "undefined") return null;
+  if (window.storage && typeof window.storage.get === "function" && typeof window.storage.set === "function") {
+    return {
+      backend: "artifact",
+      get: async (key) => {
+        const res = await window.storage.get(key);
+        return res && res.value ? res.value : null;
+      },
+      set: async (key, value) => { await window.storage.set(key, value); },
+    };
+  }
+  try {
+    if (typeof window.localStorage === "undefined" || window.localStorage === null) return null;
+    const probeKey = "__ai-learning-os-storage-probe__";
+    window.localStorage.setItem(probeKey, "1");
+    window.localStorage.removeItem(probeKey);
+    return {
+      backend: "browser",
+      get: async (key) => window.localStorage.getItem(key),
+      set: async (key, value) => { window.localStorage.setItem(key, value); },
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
 const TONE = {
   blue: { bar: "bg-[#0058bc]", soft: "bg-blue-50", text: "text-[#0058bc]", ring: "ring-blue-200" },
   emerald: { bar: "bg-emerald-600", soft: "bg-emerald-50", text: "text-emerald-700", ring: "ring-emerald-200" },
@@ -3357,17 +3396,22 @@ export default function LearningDashboard() {
   const desktopMenuButtonRef = useRef(null);
   const drawerRef = useRef(null);
   const reducedMotion = useReducedMotionPref();
-  // Serializes every window.storage.set() call for STORAGE_KEY through one promise chain, so a
+  // Serializes every storage.set() call for STORAGE_KEY through one promise chain, so a
   // save started for an older `state` can never be still in flight when a newer one starts and
-  // finish AFTER it — which would otherwise let a stale write clobber newer progress if the host
-  // storage API doesn't itself guarantee writes to the same key resolve in call order.
+  // finish AFTER it — which would otherwise let a stale write clobber newer progress if the
+  // backend doesn't itself guarantee writes to the same key resolve in call order.
   const saveQueueRef = useRef(Promise.resolve());
+  // Set once, synchronously, before any async work — { backend: "artifact" | "browser", get, set }
+  // or null if nothing usable was found. See detectStorageBackend() above.
+  const storageRef = useRef(null);
 
-  // Load saved state once. If storage is unavailable, say so rather than pretend.
+  // Load saved state once. If no backend is usable at all, say so rather than pretend.
   useEffect(() => {
     let cancelled = false;
+    storageRef.current = detectStorageBackend();
     (async () => {
-      if (typeof window === "undefined" || !window.storage) {
+      const storage = storageRef.current;
+      if (!storage) {
         if (!cancelled) { setPersist("off"); setLoaded(true); }
         return;
       }
@@ -3375,10 +3419,9 @@ export default function LearningDashboard() {
       // saving is blocked, so a parse error or an unknown version cannot erase progress.
       let raw = null;
       try {
-        const res = await window.storage.get(STORAGE_KEY);
-        raw = res && res.value ? res.value : null;
+        raw = await storage.get(STORAGE_KEY);
       } catch (e) {
-        // window.storage.get() THROWING is a real read failure, not "no record yet" — it must
+        // storage.get() THROWING is a real read failure, not "no record yet" — it must
         // be treated exactly like the unreadable/newer-version cases below: leave `state` at
         // EMPTY_STATE for display, but do NOT set persist("on"), because that would let the
         // save effect (guarded only by `loaded && persist === "on"`) fire on the very next
@@ -3411,7 +3454,7 @@ export default function LearningDashboard() {
         let backup = null;
         try {
           backup = BACKUP_KEY_PREFIX + dstr();
-          await window.storage.set(backup, raw);
+          await storage.set(backup, raw);
         } catch (e) { backup = null; }
         if (!cancelled) {
           setPersist("blocked");
@@ -3428,7 +3471,7 @@ export default function LearningDashboard() {
           let backup = null;
           try {
             backup = BACKUP_KEY_PREFIX + dstr();
-            await window.storage.set(backup, raw);
+            await storage.set(backup, raw);
           } catch (e) { backup = null; }
           if (!cancelled) setLoadIssue({ kind: "repaired", backup, dropped });
         }
@@ -3440,16 +3483,18 @@ export default function LearningDashboard() {
   }, []);
 
   // Save on every change once loading has finished. Each save is appended to saveQueueRef
-  // rather than fired independently, so writes for successive states reach window.storage.set
-  // strictly one at a time, in the same order the states occurred — the previous write always
-  // settles before the next one starts, regardless of the host API's own latency.
+  // rather than fired independently, so writes for successive states reach the active backend's
+  // set() strictly one at a time, in the same order the states occurred — the previous write
+  // always settles before the next one starts, regardless of the backend's own latency.
   useEffect(() => {
     if (!loaded || persist !== "on") return;
+    const storage = storageRef.current;
+    if (!storage) return; // persist only becomes "on" once storageRef.current is set — defensive only
     let cancelled = false;
     const payload = JSON.stringify(state);
     saveQueueRef.current = saveQueueRef.current.then(
-      () => window.storage.set(STORAGE_KEY, payload),
-      () => window.storage.set(STORAGE_KEY, payload) // previous save in the chain failed — still attempt this one
+      () => storage.set(STORAGE_KEY, payload),
+      () => storage.set(STORAGE_KEY, payload) // previous save in the chain failed — still attempt this one
     ).catch((e) => {
       if (!cancelled) setPersist("off");
     });
@@ -3528,8 +3573,12 @@ export default function LearningDashboard() {
     };
   }, [menuOpen]);
 
+  // "Saved on this device" only when the Artifact host's own storage is the active backend;
+  // the localStorage fallback gets its own, honest label rather than reusing that copy, per
+  // the persistence-adapter requirement that a fallback backend must say so, not pretend to be
+  // the primary one.
   const persistNote =
-    persist === "on" ? "Saved on this device"
+    persist === "on" ? (storageRef.current?.backend === "browser" ? "Saved in this browser" : "Saved on this device")
     : persist === "off" ? "Not saved — this session only"
     : persist === "blocked" ? "Saving paused — existing record protected"
     : "Checking storage...";

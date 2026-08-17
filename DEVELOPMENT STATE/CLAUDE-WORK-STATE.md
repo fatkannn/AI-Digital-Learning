@@ -3859,3 +3859,106 @@ PENDING, not VERIFIED, until run inside the actual Artifact runtime.**
 Do not mark persistence as resolved in any future entry until an actual reload has been observed
 in the Artifact host. Do not build further on top of this fix (e.g. additional storage features)
 until that observation is recorded.
+
+---
+
+# 58. STORAGE BACKEND FALLBACK + BROWSER-VERIFIED RELOAD PERSISTENCE (2026-08-17)
+
+## Why this was needed
+
+§57 fixed the read-failure/overwrite bug but left real reload persistence **unverified**, because
+`window.storage` only exists inside the actual Artifact host runtime, and every attempt to reach
+that host through the Claude-in-Chrome tool this session and the prior one failed with "extension
+not connected." Separately, opening `QA/qa-build.html` in any *ordinary* browser (which is the
+only way this repo's QA build can be exercised outside the Artifact host) has `window.storage`
+as `undefined` — so before this change, `detectStorageBackend`'s predecessor logic
+(`typeof window === "undefined" || !window.storage`) always fell through to `persist("off")`, i.e.
+session-only, with no way to test the actual load/save code paths in a browser at all.
+
+## Fix
+
+Added `detectStorageBackend()` in `APPLICATION/ai-digital-learning-dashboard.jsx` (just above
+`LearningDashboard`'s persistence effects): it prefers `window.storage` when both `.get`/`.set` are
+real functions (the Artifact host backend, `backend: "artifact"`), and falls back to
+`window.localStorage` when that's absent but usable (`backend: "browser"`), probing with a
+try/set/remove so a backend that exists but throws (Safari private mode, quota exceeded, etc.)
+correctly resolves to `null` rather than a false positive. Both backends are wrapped in the same
+`{ get(key) -> Promise<string|null>, set(key, value) -> Promise<void> }` shape, so the load effect,
+the serialized save-queue effect, and all of §57's read-failure/backup/repair logic are
+**completely unchanged in behavior** — they now just call `storage.get`/`storage.set` instead of
+`window.storage.get`/`window.storage.set` directly, via `storageRef.current`. The `persistNote`
+copy was also updated so the browser fallback says "Saved in this browser" rather than falsely
+reusing "Saved on this device" (which now means the Artifact host backend specifically) — an
+honesty requirement, not a UI redesign. No content, progression, scoring, navigation,
+`STORAGE_KEY` (`"ai-learning-os-v1"`), or `STATE_VERSION` (`2`) changes.
+
+## Static verification — passed
+
+```
+$ node QA/build.mjs
+QA/qa-build.html rebuilt — 897.7 KB
+
+$ node QA/verify.mjs APPLICATION/ai-digital-learning-dashboard.jsx
+PASSED  all 5368 assertions
+
+$ .\node_modules\.bin\tsc.cmd --noEmit --allowJs --jsx react --target es2020 APPLICATION/ai-digital-learning-dashboard.jsx
+(no output — 0 diagnostics, exit code 0)
+
+$ git diff --check
+(only LF/CRLF line-ending notices — no whitespace errors)
+```
+
+## Real reload persistence — VERIFIED, but only for the browser/`localStorage` backend
+
+The Claude-in-Chrome extension connected this session, but its `navigate` tool refuses `file://`
+URLs outright ("Can't interact with browser-internal or unparseable URLs"), and the extension has
+no path into the actual Artifact host either — there is still no way to reach `window.storage`
+from this tool. To get a real browser executing the real built output, `QA/qa-build.html` was
+served over a plain local HTTP server (`http://localhost:8743/qa-build.html`, a throwaway
+`node -e` static file server, not part of the repo) and driven with the connected Chrome browser.
+In that runtime `typeof window.storage === "undefined"` and `typeof window.localStorage ===
+"object"`, so `detectStorageBackend()` correctly selected the `"browser"` backend — this exercises
+the fallback path added in this entry, not the Artifact-host path from §57.
+
+Checklist performed and the result of each step:
+
+1. **Persistence status shown in app**: side menu read "Saved in this browser" (confirms
+   `backend === "browser"` and `persist === "on"`, not the Artifact-host copy).
+2. **Inspected**: `typeof window.storage` → `"undefined"`; `typeof localStorage` → `"object"`;
+   active backend → `"browser"` (from the persistence-status copy, since `storageRef` isn't
+   exposed on `window`); saved value for `ai-learning-os-v1` before completing anything →
+   `{"version":2,"startDate":"2026-08-17","micros":{},"postTests":{}}`.
+3. **Completed one micro-learning**: Module 1 micro `1-01` ("Cognitive Load & Working Memory"),
+   answered its recall check correctly ("Extraneous load"), UI marked it "done."
+4. **Waited for save**: confirmed via direct `localStorage.getItem('ai-learning-os-v1')` before
+   reloading — updated to
+   `{"version":2,"startDate":"2026-08-17","micros":{"1-01":{"completedAt":"2026-08-17","given":1,"correct":true}},"postTests":{}}`.
+5. **Refreshed the same page** (`navigate` to the same URL): `localStorage` value confirmed
+   unchanged/intact immediately after reload; after replaying the (by-design, every-load) entry
+   animation into the dashboard, the module overview read "1 of 4 completed" and "Next up ·
+   Retrieval Practice & the Spacing Effect" — the state was correctly loaded and rendered, not
+   just present in storage.
+6. **Closed and reopened the runtime**: closed the tab entirely (`tabs_close_mcp`) and opened a
+   brand-new tab (`tabs_create_mcp`) to the same URL — a stronger test than a same-tab reload,
+   since it discards all in-memory JS state, not just component state.
+7. **Confirmed progress remains again**: fresh tab's `localStorage.getItem('ai-learning-os-v1')`
+   matched step 4's value exactly; after the entry sequence, the dashboard again read "1 of 4
+   completed" and "Saved in this browser."
+
+**What this does and does not establish.** The `"browser"` backend's load/save/reload/reopen cycle
+is now genuinely browser-verified, not just statically verified. The `"artifact"` backend
+(`window.storage`) shares the exact same effects, guard logic, and serialized save queue — the
+only difference is which two functions `storage.get`/`storage.set` close over — so this is strong
+evidence the same logic is correct there too. But `window.storage` itself was still never exercised
+live in this session, because no tool available here can reach the actual Artifact host. That
+narrow claim — "the Artifact host's own `window.storage` round-trip has been observed live" —
+remains open, same as §57 left it.
+
+## Boundary for the next pass
+
+Do not claim the Artifact-host (`window.storage`) backend has been live-verified based on this
+entry — only the `localStorage` fallback backend has. If a future session gets a working
+connection into the actual Artifact host, repeat this same seven-step checklist there before
+upgrading that claim. Do not remove or weaken the `"browser"` fallback on the assumption the app
+only ever runs inside the Artifact host — this session's own QA workflow (serving
+`QA/qa-build.html` for a real-browser check) depends on it existing.
