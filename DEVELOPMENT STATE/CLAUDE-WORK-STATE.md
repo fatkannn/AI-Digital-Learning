@@ -3775,3 +3775,87 @@ were preserved.
 Do not add more UI polish or alter Layer 1/2 behavior until the persistence smoke test is recorded.
 Any future content or UI work must be separately scoped and followed by a fresh build, static QA,
 and browser verification.
+
+---
+
+# 57. PERSISTENCE OVERWRITE FIX — READ-FAILURE HANDLING (2026-08-17)
+
+## Reported symptom
+
+Manual reload smoke test after §56's checkpoint (commit `4dbd87b`) failed: learner progress reset
+after reload.
+
+## Confirmed defect
+
+`APPLICATION/ai-digital-learning-dashboard.jsx`, the initial-load effect inside
+`LearningDashboard`. The `try/catch` around `window.storage.get(STORAGE_KEY)` treated a **thrown
+read failure identically to "no record exists yet"**: the `catch` block called `setPersist("on")`
+and `setLoaded(true)` while leaving `state` at `EMPTY_STATE`. Because the separate save effect is
+guarded only by `loaded && persist === "on"`, this let the very next render call
+`window.storage.set(STORAGE_KEY, JSON.stringify(EMPTY_STATE))` — **overwriting a real saved
+record with an empty one** immediately after a failed read. This is the confirmed mechanism
+behind the reported reset-after-reload symptom.
+
+A second, related risk was found and fixed at the same time: the save effect fired each
+`window.storage.set()` call independently, with no ordering guarantee between successive calls —
+if the host storage API didn't itself guarantee same-key writes resolve in call order, a slower
+write for an older state could complete after (and clobber) a newer one.
+
+## Fix
+
+Both changes are confined to `LearningDashboard`'s two persistence effects and one banner string;
+no other code was touched:
+
+1. **Read errors now block saving instead of enabling it.** The `catch` block for
+   `window.storage.get()` now sets `persist("blocked")` and a new `loadIssue.kind: "read-error"`
+   (reusing the existing corrupt-record/newer-version banner UI and copy paths — no new UI was
+   added) instead of `persist("on")`. This prevents the save effect from running until the learner
+   explicitly chooses to start fresh, exactly like the pre-existing unreadable/newer-version
+   protections.
+2. **Writes are now serialized.** A `saveQueueRef` (`useRef(Promise.resolve())`) chains every
+   `window.storage.set(STORAGE_KEY, ...)` call so each one only starts after the previous settles,
+   removing the out-of-order-write risk regardless of host API latency.
+
+`STORAGE_KEY` (`"ai-learning-os-v1"`) and `STATE_VERSION` (`2`) are unchanged. `EMPTY_STATE`,
+`normalizeState`, and all Layer 1/2 content/progression/scoring functions are unchanged.
+
+## Static verification — passed
+
+```
+$ node QA/build.mjs
+QA/qa-build.html rebuilt — 897.0 KB
+
+$ node QA/verify.mjs APPLICATION/ai-digital-learning-dashboard.jsx
+PASSED  all 5368 assertions
+
+$ .\node_modules\.bin\tsc.cmd --noEmit --allowJs --jsx react --target es2020 APPLICATION/ai-digital-learning-dashboard.jsx
+(no output — 0 diagnostics, exit code 0)
+
+$ git diff --check
+(only LF/CRLF line-ending notices — no whitespace errors)
+```
+
+Diff reviewed hunk-by-hunk: exactly four hunks, all inside the load effect, the save effect, and
+one banner string in `LearningDashboard`. No content, UI, progression, scoring, navigation,
+`STORAGE_KEY`, or `STATE_VERSION` changes. `QA/qa-build.html`'s diff is the expected regenerated
+bundle only.
+
+## Real reload persistence — NOT VERIFIED
+
+**Do not read this fix as confirmed at runtime.** `window.storage` is an Artifact-host-provided
+API (see §14/§53 context and the fact that `QA/qa-build.html` has no `window.storage` shim) —
+the same limitation recorded in §56's "Still open" item. Across three separate attempts this
+session and the prior one, the Claude-in-Chrome browser tool reported "extension not connected,"
+so the required live checklist (confirm persistence status → complete a micro-learning → reload →
+verify the micro and module progress remain → close/reopen the runtime if supported → verify
+again) could not be executed. Even a working generic-browser connection would not settle this,
+since `window.storage` does not exist outside the actual Artifact host.
+
+**Status: source-level fix complete and verified (QA/TSC/diff). Real reload persistence remains
+PENDING, not VERIFIED, until run inside the actual Artifact runtime.**
+
+## Boundary for the next pass
+
+Do not mark persistence as resolved in any future entry until an actual reload has been observed
+in the Artifact host. Do not build further on top of this fix (e.g. additional storage features)
+until that observation is recorded.

@@ -3357,6 +3357,11 @@ export default function LearningDashboard() {
   const desktopMenuButtonRef = useRef(null);
   const drawerRef = useRef(null);
   const reducedMotion = useReducedMotionPref();
+  // Serializes every window.storage.set() call for STORAGE_KEY through one promise chain, so a
+  // save started for an older `state` can never be still in flight when a newer one starts and
+  // finish AFTER it — which would otherwise let a stale write clobber newer progress if the host
+  // storage API doesn't itself guarantee writes to the same key resolve in call order.
+  const saveQueueRef = useRef(Promise.resolve());
 
   // Load saved state once. If storage is unavailable, say so rather than pretend.
   useEffect(() => {
@@ -3373,7 +3378,18 @@ export default function LearningDashboard() {
         const res = await window.storage.get(STORAGE_KEY);
         raw = res && res.value ? res.value : null;
       } catch (e) {
-        if (!cancelled) { setPersist("on"); setLoaded(true); }
+        // window.storage.get() THROWING is a real read failure, not "no record yet" — it must
+        // be treated exactly like the unreadable/newer-version cases below: leave `state` at
+        // EMPTY_STATE for display, but do NOT set persist("on"), because that would let the
+        // save effect (guarded only by `loaded && persist === "on"`) fire on the very next
+        // render and overwrite whatever real record is sitting in storage with EMPTY_STATE.
+        // This was the root cause of progress being wiped on reload: a failed read was
+        // previously indistinguishable from "the key doesn't exist yet".
+        if (!cancelled) {
+          setPersist("blocked");
+          setLoadIssue({ kind: "read-error", backup: null, version: null });
+          setLoaded(true);
+        }
         return;
       }
       if (raw === null) {
@@ -3423,17 +3439,20 @@ export default function LearningDashboard() {
     return () => { cancelled = true; };
   }, []);
 
-  // Save on every change once loading has finished.
+  // Save on every change once loading has finished. Each save is appended to saveQueueRef
+  // rather than fired independently, so writes for successive states reach window.storage.set
+  // strictly one at a time, in the same order the states occurred — the previous write always
+  // settles before the next one starts, regardless of the host API's own latency.
   useEffect(() => {
     if (!loaded || persist !== "on") return;
     let cancelled = false;
-    (async () => {
-      try {
-        await window.storage.set(STORAGE_KEY, JSON.stringify(state));
-      } catch (e) {
-        if (!cancelled) setPersist("off");
-      }
-    })();
+    const payload = JSON.stringify(state);
+    saveQueueRef.current = saveQueueRef.current.then(
+      () => window.storage.set(STORAGE_KEY, payload),
+      () => window.storage.set(STORAGE_KEY, payload) // previous save in the chain failed — still attempt this one
+    ).catch((e) => {
+      if (!cancelled) setPersist("off");
+    });
     return () => { cancelled = true; };
   }, [state, loaded, persist]);
 
@@ -3543,6 +3562,8 @@ export default function LearningDashboard() {
           <p className="mt-1 text-xs text-[#717786]">
             {loadIssue.backup
               ? "A verbatim copy was stored under the key " + loadIssue.backup + "."
+              : loadIssue.kind === "read-error"
+              ? "The existing record could not be read at all, so no backup could be made — it has not been touched. Reloading may succeed if this was temporary."
               : "The backup copy could not be written, so the original record is the only copy — do not reset."}
             {loadIssue.version !== null && loadIssue.version !== undefined ? " Record version: " + loadIssue.version + "; this build reads version " + STATE_VERSION + "." : ""}
           </p>
